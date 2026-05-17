@@ -1,7 +1,9 @@
 <div align="center">
-  <a href="https://mdarif76769.github.io/mdarif76769/">
-    <img src="https://img.shields.io/badge/🚀_VISIT_MY_PROFILE-00ff88?style=flat-square&logo=github&logoColor=white&labelColor=1a2456&color=00ff88" alt="Visit Profile">
-  </a>
+
+### ⚡ [🔗 VISIT MY INTERACTIVE DASHBOARD](https://mdarif76769.github.io/mdarif76769/)
+
+**Click above to explore my security research & hacking tools repository**
+
 </div>
 # 🔥 MDARIF76769 - Security & Penetration Testing Expert
 
