@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MDARIF76769 - Profile Button</title>
+    <title>MDARIF76769 - Hacking Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -19,21 +19,23 @@
             --accent: #00d4ff;
             --dark-bg: #0a0e27;
             --darker-bg: #050812;
+            --card-bg: #0f1431;
+            --text-primary: #e0e0ff;
+            --text-secondary: #a0a0cc;
+            --border-color: #1a2456;
+            --glow: 0 0 20px;
         }
 
         body {
             font-family: 'IBM Plex Mono', monospace;
-            background: linear-gradient(135deg, #050812 0%, #1a0033 50%, #0a0e27 100%);
+            background: linear-gradient(135deg, var(--darker-bg) 0%, #1a0033 50%, var(--dark-bg) 100%);
             background-attachment: fixed;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: var(--text-primary);
+            overflow-x: hidden;
             position: relative;
-            overflow: hidden;
         }
 
-        /* Animated background */
+        /* Animated background grid */
         body::before {
             content: '';
             position: fixed;
@@ -46,8 +48,8 @@
                 linear-gradient(90deg, transparent 24%, rgba(0, 212, 255, 0.05) 25%, rgba(0, 212, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 212, 255, 0.05) 75%, rgba(0, 212, 255, 0.05) 76%, transparent 77%, transparent);
             background-size: 50px 50px;
             pointer-events: none;
-            animation: gridShift 20s linear infinite;
             z-index: 0;
+            animation: gridShift 20s linear infinite;
         }
 
         @keyframes gridShift {
@@ -68,259 +70,382 @@
             z-index: 1;
         }
 
-        .container {
+        main {
             position: relative;
             z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            padding: 2rem;
         }
 
-        .title {
+        /* Header */
+        header {
+            background: rgba(10, 14, 39, 0.9);
+            border-bottom: 2px solid var(--primary);
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), inset 0 1px 0 rgba(0, 255, 136, 0.1);
+            backdrop-filter: blur(10px);
+            animation: headerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes headerGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), inset 0 1px 0 rgba(0, 255, 136, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(0, 255, 136, 0.5), inset 0 1px 0 rgba(0, 255, 136, 0.2); }
+        }
+
+        h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 900;
-            color: #00ff88;
+            color: var(--primary);
             text-shadow: 
-                0 0 10px #00ff88,
-                0 0 20px #ff006e,
+                0 0 10px var(--primary),
+                0 0 20px var(--secondary),
                 0 0 30px rgba(0, 255, 136, 0.5);
             letter-spacing: 3px;
-            text-align: center;
-            animation: titleGlow 4s ease-in-out infinite;
+            margin-bottom: 0.5rem;
+            animation: titlePulse 4s ease-in-out infinite;
         }
 
-        @keyframes titleGlow {
-            0%, 100% {
-                text-shadow: 
-                    0 0 10px #00ff88,
-                    0 0 20px #ff006e,
-                    0 0 30px rgba(0, 255, 136, 0.5);
-            }
-            50% {
-                text-shadow: 
-                    0 0 20px #00ff88,
-                    0 0 40px #ff006e,
-                    0 0 60px rgba(0, 255, 136, 0.8);
-            }
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 0 0 10px var(--primary), 0 0 20px var(--secondary), 0 0 30px rgba(0, 255, 136, 0.5); }
+            50% { text-shadow: 0 0 20px var(--primary), 0 0 40px var(--secondary), 0 0 60px rgba(0, 255, 136, 0.8); }
         }
 
         .subtitle {
-            color: #00d4ff;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            color: var(--accent);
+            margin-top: 1rem;
             letter-spacing: 2px;
-            text-align: center;
-            animation: fadeIn 1.5s ease-out;
+            animation: fadeInUp 1s ease-out;
         }
 
-        /* Main Button Container */
-        .button-container {
+        /* Search Section */
+        .search-section {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .search-container {
             position: relative;
-            display: inline-block;
+            margin-bottom: 2rem;
         }
 
-        /* Glowing background effect */
-        .button-glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 150px;
-            background: radial-gradient(ellipse at center, rgba(0, 255, 136, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(20px);
-            animation: glowPulse 3s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(15, 20, 49, 0.8);
+            border: 2px solid var(--accent);
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
         }
 
-        @keyframes glowPulse {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.5;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.3);
-                opacity: 1;
-            }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5), inset 0 0 20px rgba(0, 255, 136, 0.1);
+            background: rgba(15, 20, 49, 0.95);
         }
 
-        /* Main Button */
-        .profile-btn {
-            position: relative;
-            z-index: 2;
-            padding: 1.5rem 3.5rem;
-            font-size: 1.3rem;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: #050812;
-            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
-            border: 3px solid #00ff88;
-            border-radius: 12px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+        input[type="text"]::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Filter buttons */
+        .filter-buttons {
+            display: flex;
             gap: 1rem;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 
-                0 0 30px rgba(0, 255, 136, 0.5),
-                0 0 60px rgba(0, 212, 255, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            transform: translateY(0);
-            overflow: hidden;
-            white-space: nowrap;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1.4s ease-out;
         }
 
-        /* Button shine effect */
-        .profile-btn::before {
+        .filter-btn {
+            padding: 0.7rem 1.5rem;
+            background: rgba(15, 20, 49, 0.7);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--darker-bg);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+        }
+
+        /* Repository Grid */
+        .repos-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            animation: fadeInUp 1.6s ease-out;
+        }
+
+        .repo-card {
+            background: linear-gradient(135deg, rgba(15, 20, 49, 0.8) 0%, rgba(26, 36, 86, 0.6) 100%);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .repo-card::before {
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 136, 0.1) 50%, transparent 70%);
             transform: rotate(45deg);
-            animation: buttonShine 3s infinite;
+            animation: shimmer 3s infinite;
         }
 
-        @keyframes buttonShine {
+        @keyframes shimmer {
             0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
             100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
-        .profile-btn:hover {
-            transform: translateY(-8px) scale(1.05);
-            border-color: #00d4ff;
-            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+        .repo-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-8px) scale(1.02);
             box-shadow: 
-                0 15px 50px rgba(0, 255, 136, 0.6),
-                0 0 80px rgba(0, 212, 255, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5),
-                0 0 40px rgba(255, 0, 110, 0.3);
+                0 15px 40px rgba(0, 255, 136, 0.2),
+                0 0 20px rgba(0, 212, 255, 0.3),
+                inset 0 1px 0 rgba(0, 255, 136, 0.1);
         }
 
-        .profile-btn:active {
-            transform: translateY(-4px) scale(0.98);
+        .repo-card.secondary:hover {
+            border-color: var(--secondary);
             box-shadow: 
-                0 5px 25px rgba(0, 255, 136, 0.4),
-                0 0 50px rgba(0, 212, 255, 0.3),
-                inset 0 2px 5px rgba(0, 0, 0, 0.2);
+                0 15px 40px rgba(255, 0, 110, 0.2),
+                0 0 20px rgba(255, 0, 110, 0.3),
+                inset 0 1px 0 rgba(255, 0, 110, 0.1);
         }
 
-        .btn-icon {
-            font-size: 1.5rem;
-            display: inline-block;
-            animation: iconBounce 2s ease-in-out infinite;
-        }
-
-        @keyframes iconBounce {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(8px); }
-        }
-
-        .profile-btn:hover .btn-icon {
-            animation: iconBounce 0.6s ease-in-out infinite;
-        }
-
-        /* Text wrapper */
-        .btn-text {
+        .repo-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
             position: relative;
-            z-index: 3;
+            z-index: 2;
         }
 
-        /* Alternative button styles */
-        .buttons-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-            max-width: 900px;
-        }
-
-        .alt-btn {
-            padding: 1rem 2rem;
-            font-size: 1rem;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #00ff88;
-            background: rgba(0, 255, 136, 0.1);
-            border: 2px solid #00ff88;
+        .repo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.8rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-            position: relative;
-            overflow: hidden;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
         }
 
-        .alt-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
-            transition: left 0.5s ease;
+        .repo-card.secondary .repo-icon {
+            background: linear-gradient(135deg, var(--secondary), #ff5799);
         }
 
-        .alt-btn:hover::before {
-            left: 100%;
+        .repo-card.accent .repo-icon {
+            background: linear-gradient(135deg, var(--accent), #00ffcc);
         }
 
-        .alt-btn:hover {
-            border-color: #00d4ff;
-            color: #00d4ff;
-            background: rgba(0, 212, 255, 0.15);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
-            transform: translateY(-4px);
-        }
-
-        /* Info section */
-        .info-section {
-            margin-top: 3rem;
-            padding: 2rem;
-            background: rgba(15, 20, 49, 0.6);
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            max-width: 500px;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
-            animation: fadeIn 2s ease-out;
-        }
-
-        .info-section h3 {
+        .repo-title {
             font-family: 'Orbitron', sans-serif;
-            color: #00ff88;
-            margin-bottom: 1rem;
             font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .repo-card.secondary .repo-title {
+            color: var(--secondary);
+        }
+
+        .repo-card.accent .repo-title {
+            color: var(--accent);
+        }
+
+        .repo-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            line-height: 1.5;
+            position: relative;
+            z-index: 2;
+        }
+
+        .repo-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: rgba(0, 255, 136, 0.05);
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            border-left: 2px solid var(--primary);
+        }
+
+        .repo-card.secondary .meta-item {
+            background: rgba(255, 0, 110, 0.05);
+            border-left-color: var(--secondary);
+        }
+
+        .repo-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            position: relative;
+            z-index: 2;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .repo-stats {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .visit-btn {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            color: var(--darker-bg);
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+            text-decoration: none;
+            display: inline-block;
+            letter-spacing: 1px;
+        }
+
+        .repo-card.secondary .visit-btn {
+            background: linear-gradient(135deg, var(--secondary), #ff5799);
+            box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
+        }
+
+        .repo-card.accent .visit-btn {
+            background: linear-gradient(135deg, var(--accent), #00ffcc);
+        }
+
+        .visit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        .repo-card.secondary .visit-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 0, 110, 0.5);
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            font-size: 1.2rem;
+            color: var(--accent);
+            gap: 1rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10, 14, 39, 0.9);
+            border-top: 2px solid var(--accent);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 3rem;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--accent);
             text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
 
-        .info-section p {
-            color: #a0a0cc;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .info-section p strong {
-            color: #00d4ff;
-        }
-
         /* Animations */
-        @keyframes fadeIn {
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(20px);
@@ -333,132 +458,239 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .title {
-                font-size: 1.8rem;
+            h1 {
+                font-size: 2rem;
             }
 
-            .profile-btn {
-                padding: 1.2rem 2.5rem;
-                font-size: 1.1rem;
-            }
-
-            .button-glow {
-                width: 200px;
-                height: 100px;
-            }
-
-            .buttons-grid {
+            .repos-container {
                 grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
             }
         }
 
-        /* Floating particles effect */
-        .particle {
-            position: fixed;
-            pointer-events: none;
-            opacity: 0.3;
-            font-size: 1.5rem;
+        /* Language badge colors */
+        .lang-python { color: #3776ab; }
+        .lang-html { color: #e34c26; }
+        .lang-javascript { color: #f7df1e; }
+        .lang-shell { color: #89e051; }
+        .lang-css { color: #563d7c; }
+        .lang-other { color: var(--accent); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .status-badge.updated {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent);
+            border-color: var(--accent);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="title">🔐 MDARIF76769</h1>
-        <p class="subtitle">>>> Click Below To Visit My Profile <<<</p>
+    <header>
+        <h1>⚡ MDARIF76769</h1>
+        <p class="subtitle">>> Security Research & Penetration Testing Tools</p>
+    </header>
 
-        <!-- Main Button -->
-        <div class="button-container">
-            <div class="button-glow"></div>
-            <a href="https://mdarif76769.github.io/mdarif76769/" target="_blank" class="profile-btn">
-                <span class="btn-icon">→</span>
-                <span class="btn-text">VISIT PROFILE</span>
-            </a>
+    <main>
+        <div class="search-section">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="🔍 Search repositories... (e.g., SMS, PAGASUS, PhoneSploit)">
+            </div>
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Repositories</button>
+                <button class="filter-btn" data-filter="python">Python</button>
+                <button class="filter-btn" data-filter="html">HTML</button>
+                <button class="filter-btn" data-filter="shell">Shell</button>
+                <button class="filter-btn" data-filter="starred">⭐ Starred</button>
+            </div>
         </div>
 
-        <!-- Alternative Buttons -->
-        <div class="buttons-grid">
-            <a href="https://github.com/mdarif76769" target="_blank" class="alt-btn">
-                <span>🐙</span>
-                <span>GitHub</span>
-            </a>
-            <a href="https://mdarif76769.github.io/mdarif76769/" target="_blank" class="alt-btn">
-                <span>🌐</span>
-                <span>Dashboard</span>
-            </a>
-            <a href="https://github.com/mdarif76769?tab=repositories" target="_blank" class="alt-btn">
-                <span>📦</span>
-                <span>Repositories</span>
-            </a>
+        <div class="repos-container" id="reposContainer">
+            <div class="loading">
+                <div class="spinner"></div>
+                <span>Loading repositories...</span>
+            </div>
         </div>
+    </main>
 
-        <!-- Info Section -->
-        <div class="info-section">
-            <h3>⚡ Quick Links</h3>
-            <p>
-                Access your <strong>Security Research Dashboard</strong> with all repositories, 
-                projects, and penetration testing tools. Explore <strong>100+ repositories</strong> 
-                covering hacking, security, and cybersecurity.
-            </p>
-            <p style="margin-top: 1rem;">
-                <strong>Pro Tip:</strong> Use the dashboard to search, filter, and explore your 
-                security tools by language, stars, and update date.
-            </p>
-        </div>
-    </div>
+    <footer>
+        <p>Made with ❤️ by MDARIF76769 | <a href="https://github.com/mdarif76769">Visit GitHub Profile →</a></p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">© 2026 All Rights Reserved | Educational Purpose Only</p>
+    </footer>
 
     <script>
-        // Create floating particles
-        function createParticles() {
-            const container = document.body;
-            const particleCount = 20;
-            const characters = ['⚡', '🔐', '💻', '🔍', '⚙️', '🛡️'];
+        const GITHUB_USERNAME = 'mdarif76769';
+        const API_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`;
 
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.textContent = characters[Math.floor(Math.random() * characters.length)];
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animation = `float ${5 + Math.random() * 5}s ease-in-out infinite`;
-                
-                container.appendChild(particle);
+        let allRepos = [];
+        let currentFilter = 'all';
+
+        // Fetch repositories from GitHub API
+        async function fetchRepositories() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    allRepos = data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+                    renderRepositories(allRepos);
+                } else {
+                    showError('Failed to fetch repositories');
+                }
+            } catch (error) {
+                console.error('Error fetching repos:', error);
+                showError('Error connecting to GitHub API');
             }
         }
 
-        // Add floating animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes float {
-                0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
-                50% { transform: translateY(-30px) rotate(10deg); opacity: 0.6; }
+        // Filter repositories
+        function filterRepositories(filter) {
+            currentFilter = filter;
+
+            let filtered = allRepos;
+
+            if (filter === 'python') {
+                filtered = allRepos.filter(repo => repo.language === 'Python');
+            } else if (filter === 'html') {
+                filtered = allRepos.filter(repo => repo.language === 'HTML');
+            } else if (filter === 'shell') {
+                filtered = allRepos.filter(repo => repo.language === 'Shell');
+            } else if (filter === 'starred') {
+                filtered = allRepos.filter(repo => repo.stargazers_count > 0);
             }
-        `;
-        document.head.appendChild(style);
 
-        createParticles();
+            renderRepositories(filtered);
+        }
 
-        // Button click animation
-        const mainBtn = document.querySelector('.profile-btn');
-        mainBtn.addEventListener('click', function(e) {
-            // Create ripple effect
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
+        // Search repositories
+        function searchRepositories(query) {
+            const filtered = allRepos.filter(repo =>
+                repo.name.toLowerCase().includes(query.toLowerCase()) ||
+                (repo.description && repo.description.toLowerCase().includes(query.toLowerCase()))
+            );
 
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
+            renderRepositories(filtered);
+        }
+
+        // Render repositories
+        function renderRepositories(repos) {
+            const container = document.getElementById('reposContainer');
+
+            if (repos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-icon">⚠️</div>
+                        <h3>No repositories found</h3>
+                        <p>Try adjusting your search or filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const colors = ['primary', 'secondary', 'accent'];
+            let colorIndex = 0;
+
+            container.innerHTML = repos.map(repo => {
+                const colorClass = colors[colorIndex % colors.length];
+                colorIndex++;
+
+                const language = repo.language || 'Unknown';
+                const languageClass = `lang-${language.toLowerCase().replace(/[+#]/g, '')}`;
+                const stars = repo.stargazers_count || 0;
+                const description = repo.description || 'No description provided';
+                const updated = new Date(repo.updated_at).toLocaleDateString();
+                const isStarred = stars > 0 ? '⭐' : '☆';
+
+                return `
+                    <div class="repo-card ${colorClass}">
+                        <div class="repo-header">
+                            <div class="repo-icon">📦</div>
+                            <h3 class="repo-title">${repo.name}</h3>
+                        </div>
+
+                        <p class="repo-description">${description}</p>
+
+                        <div class="repo-meta">
+                            <div class="meta-item">
+                                <span class="${languageClass}">●</span>
+                                <span>${language}</span>
+                            </div>
+                            ${repo.topics && repo.topics.length > 0 ? `
+                                <div class="meta-item">
+                                    🏷️ ${repo.topics.slice(0, 2).join(', ')}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="repo-footer">
+                            <div class="repo-stats">
+                                <div class="stat">
+                                    <span>${isStarred}</span>
+                                    <span>${stars}</span>
+                                </div>
+                                <div class="stat">
+                                    <span>🔄</span>
+                                    <span>${repo.forks_count}</span>
+                                </div>
+                                <div class="stat">
+                                    <span>📅</span>
+                                    <span>${updated}</span>
+                                </div>
+                            </div>
+                            <a href="${repo.html_url}" target="_blank" class="visit-btn">VISIT →</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Show error
+        function showError(message) {
+            const container = document.getElementById('reposContainer');
+            container.innerHTML = `
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <div class="empty-icon">❌</div>
+                    <h3>${message}</h3>
+                    <p>Please try refreshing the page</p>
+                </div>
+            `;
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchRepositories(e.target.value);
         });
 
-        // Smooth scroll for mobile
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Allow normal navigation
-                console.log('Navigating to:', this.href);
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterRepositories(btn.dataset.filter);
             });
         });
+
+        // Load repositories on page load
+        window.addEventListener('load', fetchRepositories);
     </script>
 </body>
 </html>
