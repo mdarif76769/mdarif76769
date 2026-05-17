@@ -1,8 +1,11 @@
 <p align="center">
   <a href="https://mdarif76769.github.io/mdarif76769/" target="_blank">
-    <img src="https://img.shields.io/badge/💻%20INITIALIZE%20CORE%20-%20ENTER%20DASHBOARD%20-%20black?style=for-the-badge&logo=hackthebox&logoColor=00ff88" height="50">
+    <img src="https://img.shields.io/badge/STATUS-ONLINE-00FF66?style=for-the-badge&logo=statuspage&logoColor=white" height="35">
+    <img src="https://img.shields.io/badge/ACCESS-ENTER_CYBER_DASHBOARD-00e5ff?style=for-the-badge&logo=linux&logoColor=black" height="35">
+    <img src="https://img.shields.io/badge/SECURE-256%20BIT-red?style=for-the-badge&logo=wireshark&logoColor=white" height="35">
   </a>
 </p>
+
 
 
 # 🔥 MDARIF76769 - Security & Penetration Testing Expert
