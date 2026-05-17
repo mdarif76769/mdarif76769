@@ -1,13 +1,8 @@
-<p align="center">
-  <a href="https://mdarif76769.github.io/mdarif76769/" target="_blank">
-    <img src="https://img.shields.io/badge/STATUS-ONLINE-00FF66?style=for-the-badge&logo=statuspage&logoColor=white" height="35">
-    <img src="https://img.shields.io/badge/ACCESS-ENTER_CYBER_DASHBOARD-00e5ff?style=for-the-badge&logo=linux&logoColor=black" height="35">
-    <img src="https://img.shields.io/badge/SECURE-256%20BIT-red?style=for-the-badge&logo=wireshark&logoColor=white" height="35">
+<div align="center">
+  <a href="https://mdarif76769.github.io/mdarif76769/">
+    <img src="https://img.shields.io/badge/🚀_VISIT_MY_PROFILE-00ff88?style=flat-square&logo=github&logoColor=white&labelColor=1a2456&color=00ff88" alt="Visit Profile">
   </a>
-</p>
-
-
-
+</div>
 # 🔥 MDARIF76769 - Security & Penetration Testing Expert
 
 > *"Where Code Meets Security - Penetration Testing, Bug Bounty, and Cybersecurity Tools"*
