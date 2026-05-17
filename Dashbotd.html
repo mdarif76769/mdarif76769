@@ -1,1 +1,697 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDARIF76769 - Hacking Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+        :root {
+            --primary: #00ff88;
+            --secondary: #ff006e;
+            --accent: #00d4ff;
+            --dark-bg: #0a0e27;
+            --darker-bg: #050812;
+            --card-bg: #0f1431;
+            --text-primary: #e0e0ff;
+            --text-secondary: #a0a0cc;
+            --border-color: #1a2456;
+            --glow: 0 0 20px;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, #1a0033 50%, var(--dark-bg) 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(0deg, transparent 24%, rgba(0, 255, 136, 0.05) 25%, rgba(0, 255, 136, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 255, 136, 0.05) 75%, rgba(0, 255, 136, 0.05) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(0, 212, 255, 0.05) 25%, rgba(0, 212, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 212, 255, 0.05) 75%, rgba(0, 212, 255, 0.05) 76%, transparent 77%, transparent);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+            animation: gridShift 20s linear infinite;
+        }
+
+        @keyframes gridShift {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        /* Noise effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise" /></filter><rect width="100" height="100" fill="%23fff" filter="url(%23noise)" opacity="0.02"/></svg>');
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        main {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header */
+        header {
+            background: rgba(10, 14, 39, 0.9);
+            border-bottom: 2px solid var(--primary);
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), inset 0 1px 0 rgba(0, 255, 136, 0.1);
+            backdrop-filter: blur(10px);
+            animation: headerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes headerGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), inset 0 1px 0 rgba(0, 255, 136, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(0, 255, 136, 0.5), inset 0 1px 0 rgba(0, 255, 136, 0.2); }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 
+                0 0 10px var(--primary),
+                0 0 20px var(--secondary),
+                0 0 30px rgba(0, 255, 136, 0.5);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+            animation: titlePulse 4s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 0 0 10px var(--primary), 0 0 20px var(--secondary), 0 0 30px rgba(0, 255, 136, 0.5); }
+            50% { text-shadow: 0 0 20px var(--primary), 0 0 40px var(--secondary), 0 0 60px rgba(0, 255, 136, 0.8); }
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--accent);
+            margin-top: 1rem;
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        /* Search Section */
+        .search-section {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(15, 20, 49, 0.8);
+            border: 2px solid var(--accent);
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5), inset 0 0 20px rgba(0, 255, 136, 0.1);
+            background: rgba(15, 20, 49, 0.95);
+        }
+
+        input[type="text"]::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Filter buttons */
+        .filter-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1.4s ease-out;
+        }
+
+        .filter-btn {
+            padding: 0.7rem 1.5rem;
+            background: rgba(15, 20, 49, 0.7);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--darker-bg);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+        }
+
+        /* Repository Grid */
+        .repos-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            animation: fadeInUp 1.6s ease-out;
+        }
+
+        .repo-card {
+            background: linear-gradient(135deg, rgba(15, 20, 49, 0.8) 0%, rgba(26, 36, 86, 0.6) 100%);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .repo-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 136, 0.1) 50%, transparent 70%);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .repo-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 15px 40px rgba(0, 255, 136, 0.2),
+                0 0 20px rgba(0, 212, 255, 0.3),
+                inset 0 1px 0 rgba(0, 255, 136, 0.1);
+        }
+
+        .repo-card.secondary:hover {
+            border-color: var(--secondary);
+            box-shadow: 
+                0 15px 40px rgba(255, 0, 110, 0.2),
+                0 0 20px rgba(255, 0, 110, 0.3),
+                inset 0 1px 0 rgba(255, 0, 110, 0.1);
+        }
+
+        .repo-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .repo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .repo-card.secondary .repo-icon {
+            background: linear-gradient(135deg, var(--secondary), #ff5799);
+        }
+
+        .repo-card.accent .repo-icon {
+            background: linear-gradient(135deg, var(--accent), #00ffcc);
+        }
+
+        .repo-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .repo-card.secondary .repo-title {
+            color: var(--secondary);
+        }
+
+        .repo-card.accent .repo-title {
+            color: var(--accent);
+        }
+
+        .repo-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            line-height: 1.5;
+            position: relative;
+            z-index: 2;
+        }
+
+        .repo-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: rgba(0, 255, 136, 0.05);
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            border-left: 2px solid var(--primary);
+        }
+
+        .repo-card.secondary .meta-item {
+            background: rgba(255, 0, 110, 0.05);
+            border-left-color: var(--secondary);
+        }
+
+        .repo-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            position: relative;
+            z-index: 2;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .repo-stats {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .visit-btn {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            color: var(--darker-bg);
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+            text-decoration: none;
+            display: inline-block;
+            letter-spacing: 1px;
+        }
+
+        .repo-card.secondary .visit-btn {
+            background: linear-gradient(135deg, var(--secondary), #ff5799);
+            box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
+        }
+
+        .repo-card.accent .visit-btn {
+            background: linear-gradient(135deg, var(--accent), #00ffcc);
+        }
+
+        .visit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        .repo-card.secondary .visit-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 0, 110, 0.5);
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            font-size: 1.2rem;
+            color: var(--accent);
+            gap: 1rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10, 14, 39, 0.9);
+            border-top: 2px solid var(--accent);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 3rem;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .repos-container {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+
+        /* Language badge colors */
+        .lang-python { color: #3776ab; }
+        .lang-html { color: #e34c26; }
+        .lang-javascript { color: #f7df1e; }
+        .lang-shell { color: #89e051; }
+        .lang-css { color: #563d7c; }
+        .lang-other { color: var(--accent); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .status-badge.updated {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>⚡ MDARIF76769</h1>
+        <p class="subtitle">>> Security Research & Penetration Testing Tools</p>
+    </header>
+
+    <main>
+        <div class="search-section">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="🔍 Search repositories... (e.g., SMS, PAGASUS, PhoneSploit)">
+            </div>
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Repositories</button>
+                <button class="filter-btn" data-filter="python">Python</button>
+                <button class="filter-btn" data-filter="html">HTML</button>
+                <button class="filter-btn" data-filter="shell">Shell</button>
+                <button class="filter-btn" data-filter="starred">⭐ Starred</button>
+            </div>
+        </div>
+
+        <div class="repos-container" id="reposContainer">
+            <div class="loading">
+                <div class="spinner"></div>
+                <span>Loading repositories...</span>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Made with ❤️ by MDARIF76769 | <a href="https://github.com/mdarif76769">Visit GitHub Profile →</a></p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">© 2026 All Rights Reserved | Educational Purpose Only</p>
+    </footer>
+
+    <script>
+        const GITHUB_USERNAME = 'mdarif76769';
+        const API_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`;
+
+        let allRepos = [];
+        let currentFilter = 'all';
+
+        // Fetch repositories from GitHub API
+        async function fetchRepositories() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    allRepos = data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+                    renderRepositories(allRepos);
+                } else {
+                    showError('Failed to fetch repositories');
+                }
+            } catch (error) {
+                console.error('Error fetching repos:', error);
+                showError('Error connecting to GitHub API');
+            }
+        }
+
+        // Filter repositories
+        function filterRepositories(filter) {
+            currentFilter = filter;
+
+            let filtered = allRepos;
+
+            if (filter === 'python') {
+                filtered = allRepos.filter(repo => repo.language === 'Python');
+            } else if (filter === 'html') {
+                filtered = allRepos.filter(repo => repo.language === 'HTML');
+            } else if (filter === 'shell') {
+                filtered = allRepos.filter(repo => repo.language === 'Shell');
+            } else if (filter === 'starred') {
+                filtered = allRepos.filter(repo => repo.stargazers_count > 0);
+            }
+
+            renderRepositories(filtered);
+        }
+
+        // Search repositories
+        function searchRepositories(query) {
+            const filtered = allRepos.filter(repo =>
+                repo.name.toLowerCase().includes(query.toLowerCase()) ||
+                (repo.description && repo.description.toLowerCase().includes(query.toLowerCase()))
+            );
+
+            renderRepositories(filtered);
+        }
+
+        // Render repositories
+        function renderRepositories(repos) {
+            const container = document.getElementById('reposContainer');
+
+            if (repos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-icon">⚠️</div>
+                        <h3>No repositories found</h3>
+                        <p>Try adjusting your search or filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const colors = ['primary', 'secondary', 'accent'];
+            let colorIndex = 0;
+
+            container.innerHTML = repos.map(repo => {
+                const colorClass = colors[colorIndex % colors.length];
+                colorIndex++;
+
+                const language = repo.language || 'Unknown';
+                const languageClass = `lang-${language.toLowerCase().replace(/[+#]/g, '')}`;
+                const stars = repo.stargazers_count || 0;
+                const description = repo.description || 'No description provided';
+                const updated = new Date(repo.updated_at).toLocaleDateString();
+                const isStarred = stars > 0 ? '⭐' : '☆';
+
+                return `
+                    <div class="repo-card ${colorClass}">
+                        <div class="repo-header">
+                            <div class="repo-icon">📦</div>
+                            <h3 class="repo-title">${repo.name}</h3>
+                        </div>
+
+                        <p class="repo-description">${description}</p>
+
+                        <div class="repo-meta">
+                            <div class="meta-item">
+                                <span class="${languageClass}">●</span>
+                                <span>${language}</span>
+                            </div>
+                            ${repo.topics && repo.topics.length > 0 ? `
+                                <div class="meta-item">
+                                    🏷️ ${repo.topics.slice(0, 2).join(', ')}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="repo-footer">
+                            <div class="repo-stats">
+                                <div class="stat">
+                                    <span>${isStarred}</span>
+                                    <span>${stars}</span>
+                                </div>
+                                <div class="stat">
+                                    <span>🔄</span>
+                                    <span>${repo.forks_count}</span>
+                                </div>
+                                <div class="stat">
+                                    <span>📅</span>
+                                    <span>${updated}</span>
+                                </div>
+                            </div>
+                            <a href="${repo.html_url}" target="_blank" class="visit-btn">VISIT →</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Show error
+        function showError(message) {
+            const container = document.getElementById('reposContainer');
+            container.innerHTML = `
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <div class="empty-icon">❌</div>
+                    <h3>${message}</h3>
+                    <p>Please try refreshing the page</p>
+                </div>
+            `;
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchRepositories(e.target.value);
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterRepositories(btn.dataset.filter);
+            });
+        });
+
+        // Load repositories on page load
+        window.addEventListener('load', fetchRepositories);
+    </script>
+</body>
+</html>
