@@ -6,9 +6,10 @@
 
 <p align="center">
   <a href="https://mdarif76769.github.io/mdarif76769/" target="_blank">
-    <img src="https://img.shields.io/badge/ENTER_CYBER_DASHBOARD-00ff88?style=for-the-badge&logo=probot&logoColor=black" height="40">
+    <img src="https://img.shields.io/badge/⚡%20SYSTEM%20ACCESS%20-%20ENTER%20CYBER%20DASHBOARD%20-%2000FF66?style=for-the-badge&logo=matrix&logoColor=00FF66" height="45">
   </a>
 </p>
+
 # 🔥 MDARIF76769 - Security & Penetration Testing Expert
 
 > *"Where Code Meets Security - Penetration Testing, Bug Bounty, and Cybersecurity Tools"*
