@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MDARIF76769 - Profile Button</title>
+    <title>MDARIF76769 - Security Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -55,7 +55,6 @@
             100% { transform: translateY(50px); }
         }
 
-        /* Noise effect */
         body::after {
             content: '';
             position: fixed;
@@ -76,16 +75,18 @@
             align-items: center;
             gap: 2rem;
             padding: 2rem;
+            max-width: 900px;
+            width: 100%;
         }
 
         .title {
             font-family: 'Orbitron', sans-serif;
             font-size: 2.5rem;
             font-weight: 900;
-            color: #00ff88;
+            color: var(--primary);
             text-shadow: 
-                0 0 10px #00ff88,
-                0 0 20px #ff006e,
+                0 0 10px var(--primary),
+                0 0 20px var(--secondary),
                 0 0 30px rgba(0, 255, 136, 0.5);
             letter-spacing: 3px;
             text-align: center;
@@ -95,33 +96,32 @@
         @keyframes titleGlow {
             0%, 100% {
                 text-shadow: 
-                    0 0 10px #00ff88,
-                    0 0 20px #ff006e,
+                    0 0 10px var(--primary),
+                    0 0 20px var(--secondary),
                     0 0 30px rgba(0, 255, 136, 0.5);
             }
             50% {
                 text-shadow: 
-                    0 0 20px #00ff88,
-                    0 0 40px #ff006e,
+                    0 0 20px var(--primary),
+                    0 0 40px var(--secondary),
                     0 0 60px rgba(0, 255, 136, 0.8);
             }
         }
 
         .subtitle {
-            color: #00d4ff;
+            color: var(--accent);
             font-size: 1.1rem;
             letter-spacing: 2px;
             text-align: center;
             animation: fadeIn 1.5s ease-out;
         }
 
-        /* Main Button Container */
         .button-container {
             position: relative;
             display: inline-block;
+            margin: 1rem 0;
         }
 
-        /* Glowing background effect */
         .button-glow {
             position: absolute;
             top: 50%;
@@ -148,7 +148,6 @@
             }
         }
 
-        /* Main Button */
         .profile-btn {
             position: relative;
             z-index: 2;
@@ -157,9 +156,9 @@
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
             letter-spacing: 3px;
-            color: #050812;
-            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
-            border: 3px solid #00ff88;
+            color: var(--darker-bg);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: 3px solid var(--primary);
             border-radius: 12px;
             cursor: pointer;
             text-decoration: none;
@@ -177,7 +176,6 @@
             white-space: nowrap;
         }
 
-        /* Button shine effect */
         .profile-btn::before {
             content: '';
             position: absolute;
@@ -197,8 +195,8 @@
 
         .profile-btn:hover {
             transform: translateY(-8px) scale(1.05);
-            border-color: #00d4ff;
-            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
             box-shadow: 
                 0 15px 50px rgba(0, 255, 136, 0.6),
                 0 0 80px rgba(0, 212, 255, 0.5),
@@ -208,10 +206,11 @@
 
         .profile-btn:active {
             transform: translateY(-4px) scale(0.98);
-            box-shadow: 
-                0 5px 25px rgba(0, 255, 136, 0.4),
-                0 0 50px rgba(0, 212, 255, 0.3),
-                inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
         }
 
         .btn-icon {
@@ -229,19 +228,17 @@
             animation: iconBounce 0.6s ease-in-out infinite;
         }
 
-        /* Text wrapper */
         .btn-text {
             position: relative;
             z-index: 3;
         }
 
-        /* Alternative button styles */
         .buttons-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 2rem;
-            margin-top: 3rem;
-            max-width: 900px;
+            margin-top: 2rem;
+            width: 100%;
         }
 
         .alt-btn {
@@ -250,9 +247,9 @@
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
             letter-spacing: 2px;
-            color: #00ff88;
+            color: var(--primary);
             background: rgba(0, 255, 136, 0.1);
-            border: 2px solid #00ff88;
+            border: 2px solid var(--primary);
             border-radius: 8px;
             cursor: pointer;
             text-decoration: none;
@@ -282,28 +279,28 @@
         }
 
         .alt-btn:hover {
-            border-color: #00d4ff;
-            color: #00d4ff;
+            border-color: var(--accent);
+            color: var(--accent);
             background: rgba(0, 212, 255, 0.15);
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
             transform: translateY(-4px);
         }
 
-        /* Info section */
         .info-section {
-            margin-top: 3rem;
+            margin-top: 2rem;
             padding: 2rem;
             background: rgba(15, 20, 49, 0.6);
-            border: 2px solid #00d4ff;
+            border: 2px solid var(--accent);
             border-radius: 12px;
-            max-width: 500px;
+            width: 100%;
+            max-width: 600px;
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
             animation: fadeIn 2s ease-out;
         }
 
         .info-section h3 {
             font-family: 'Orbitron', sans-serif;
-            color: #00ff88;
+            color: var(--primary);
             margin-bottom: 1rem;
             font-size: 1.3rem;
             text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
@@ -313,22 +310,80 @@
             color: #a0a0cc;
             line-height: 1.6;
             font-size: 0.95rem;
+            margin-bottom: 0.8rem;
         }
 
         .info-section p strong {
-            color: #00d4ff;
+            color: var(--accent);
         }
 
-        /* Animations */
-        @keyframes fadeIn {
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 255, 136, 0.9);
+            color: var(--darker-bg);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+
+        @keyframes slideIn {
             from {
+                transform: translateX(400px);
                 opacity: 0;
-                transform: translateY(20px);
             }
             to {
+                transform: translateX(0);
                 opacity: 1;
-                transform: translateY(0);
             }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Feature list */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature {
+            background: rgba(0, 255, 136, 0.05);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-text {
+            font-size: 0.85rem;
+            color: #a0a0cc;
         }
 
         /* Responsive */
@@ -350,42 +405,75 @@
             .buttons-grid {
                 grid-template-columns: 1fr;
             }
+
+            .toast {
+                right: 10px;
+                left: 10px;
+                bottom: 10px;
+            }
         }
 
-        /* Floating particles effect */
+        /* Particle effect */
         .particle {
             position: fixed;
             pointer-events: none;
             opacity: 0.3;
             font-size: 1.5rem;
         }
+
+        /* Status indicator */
+        .status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="title">🔐 MDARIF76769</h1>
-        <p class="subtitle">>>> Click Below To Visit My Profile <<<</p>
+        <p class="subtitle">>>> Security Research & Penetration Testing <<<</p>
 
         <!-- Main Button -->
         <div class="button-container">
             <div class="button-glow"></div>
-            <a href="https://mdarif76769.github.io/mdarif76769/Dashbord.html" target="_blank" class="profile-btn">
+            <button class="profile-btn" id="mainBtn" onclick="navigateTo('dashboard')">
                 <span class="btn-icon">→</span>
-                <span class="btn-text">VISIT PROFILE</span>
-            </a>
+                <span class="btn-text">VISIT DASHBOARD</span>
+            </button>
         </div>
 
         <!-- Alternative Buttons -->
         <div class="buttons-grid">
-            <a href="https://github.com/mdarif76769" target="_blank" class="alt-btn">
+            <a href="https://github.com/mdarif76769" target="_blank" class="alt-btn" onclick="trackClick('github')">
                 <span>🐙</span>
                 <span>GitHub</span>
             </a>
-            <a href="https://mdarif76769.github.io/mdarif76769/Dashbord.html" target="_blank" class="alt-btn">
-                <span>🌐</span>
+            <button class="alt-btn" onclick="navigateTo('dashboard')">
+                <span>📊</span>
                 <span>Dashboard</span>
-            </a>
-            <a href="https://github.com/mdarif76769?tab=repositories" target="_blank" class="alt-btn">
+            </button>
+            <a href="https://github.com/mdarif76769?tab=repositories" target="_blank" class="alt-btn" onclick="trackClick('repos')">
                 <span>📦</span>
                 <span>Repositories</span>
             </a>
@@ -393,20 +481,47 @@
 
         <!-- Info Section -->
         <div class="info-section">
-            <h3>⚡ Quick Links</h3>
-            <p>
-                Access your <strong>Security Research Dashboard</strong> with all repositories, 
-                projects, and penetration testing tools. Explore <strong>100+ repositories</strong> 
-                covering hacking, security, and cybersecurity.
+            <h3>⚡ Dashboard Features</h3>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🔍</div>
+                    <div class="feature-text">Full Search</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🏷️</div>
+                    <div class="feature-text">Language Filter</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⭐</div>
+                    <div class="feature-text">Sort by Stars</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-text">Mobile Ready</div>
+                </div>
+            </div>
+
+            <p style="margin-top: 1.5rem;">
+                <span class="status"></span><strong>Status:</strong> Active - All systems operational
             </p>
-            <p style="margin-top: 1rem;">
-                <strong>Pro Tip:</strong> Use the dashboard to search, filter, and explore your 
-                security tools by language, stars, and update date.
+            
+            <p>
+                Explore <strong>100+ repositories</strong> with real-time GitHub API integration. 
+                Search, filter, and discover security tools by language, popularity, and update date.
             </p>
         </div>
     </div>
 
     <script>
+        // Configuration
+        const CONFIG = {
+            dashboardURL: 'https://mdarif76769.github.io/mdarif76769/Dashbord.html',
+            githubURL: 'https://github.com/mdarif76769',
+            reposURL: 'https://github.com/mdarif76769?tab=repositories',
+            fallbackURL: 'https://github.com/mdarif76769' // Fallback if dashboard URL fails
+        };
+
         // Create floating particles
         function createParticles() {
             const container = document.body;
@@ -437,28 +552,81 @@
 
         createParticles();
 
-        // Button click animation
-        const mainBtn = document.querySelector('.profile-btn');
-        mainBtn.addEventListener('click', function(e) {
-            // Create ripple effect
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
 
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Navigate to dashboard with fallback
+        function navigateTo(target) {
+            const btn = document.getElementById('mainBtn');
+            
+            if (target === 'dashboard') {
+                btn.classList.add('loading');
+                btn.innerHTML = '<span class="spinner"></span> <span class="btn-text">LOADING...</span>';
+
+                // Try primary URL
+                setTimeout(() => {
+                    window.location.href = CONFIG.dashboardURL;
+                    
+                    // Fallback after 3 seconds
+                    setTimeout(() => {
+                        if (document.hidden === false) {
+                            showToast('⚠️ Trying fallback...');
+                            window.location.href = CONFIG.fallbackURL;
+                        }
+                    }, 3000);
+                }, 500);
+            }
+        }
+
+        // Track clicks
+        function trackClick(source) {
+            console.log('Navigating to:', source);
+        }
+
+        // Check if dashboard URL is accessible
+        function checkDashboardAccess() {
+            fetch(CONFIG.dashboardURL, { method: 'HEAD' })
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn('Dashboard URL may not be accessible');
+                    }
+                })
+                .catch(error => {
+                    console.warn('Dashboard check failed:', error);
+                });
+        }
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                navigateTo('dashboard');
+            }
         });
 
-        // Smooth scroll for mobile
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Allow normal navigation
-                console.log('Navigating to:', this.href);
+        // Initialize
+        window.addEventListener('load', () => {
+            checkDashboardAccess();
+            showToast('✨ Welcome to MDARIF76769');
+        });
+
+        // Add copy to clipboard functionality
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ Link copied!');
+            }).catch(() => {
+                showToast('❌ Copy failed');
             });
-        });
+        }
     </script>
 </body>
 </html>
