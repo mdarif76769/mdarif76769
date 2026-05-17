@@ -1,12 +1,10 @@
 <div align="center">
 
-### ⚡ [🔗 VISIT MY INTERACTIVE DASHBOARD](https://mdarif76769.github.io/mdarif76769/)
-
-**Click above to explore my security research & hacking tools repository**
+[![Profile](https://img.shields.io/badge/Profile-Dashboard-ff006e?style=for-the-badge&logo=github)](https://mdarif76769.github.io/mdarif76769/)
+[![Repositories](https://img.shields.io/badge/Repositories-100+-00ff88?style=for-the-badge&logo=github)](https://github.com/mdarif76769)
+[![Status](https://img.shields.io/badge/Status-Active-00d4ff?style=for-the-badge)](https://mdarif76769.github.io/mdarif76769/)
 
 </div>
-# 🔥 MDARIF76769 - Security & Penetration Testing Expert
-
 > *"Where Code Meets Security - Penetration Testing, Bug Bounty, and Cybersecurity Tools"*
 
 ---
