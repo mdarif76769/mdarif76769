@@ -1,14 +1,9 @@
 <p align="center">
   <a href="https://mdarif76769.github.io/mdarif76769/" target="_blank">
-    <img src="https://raw.githubusercontent.com/mdarif76769/mdarif76769/main/your-page-preview.gif" alt="Visit My Cyber Dashboard" width="100%">
+    <img src="https://img.shields.io/badge/💻%20INITIALIZE%20CORE%20-%20ENTER%20DASHBOARD%20-%20black?style=for-the-badge&logo=hackthebox&logoColor=00ff88" height="50">
   </a>
 </p>
 
-<p align="center">
-  <a href="https://mdarif76769.github.io/mdarif76769/" target="_blank">
-    <img src="https://img.shields.io/badge/⚡%20SYSTEM%20ACCESS%20-%20ENTER%20CYBER%20DASHBOARD%20-%2000FF66?style=for-the-badge&logo=matrix&logoColor=00FF66" height="45">
-  </a>
-</p>
 
 # 🔥 MDARIF76769 - Security & Penetration Testing Expert
 
