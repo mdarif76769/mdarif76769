@@ -1,24 +1,6 @@
-<div align="center">
+#  ☠️Tap This pictures and Visited My site ☠️ #
 
-[![Profile](https://img.shields.io/badge/Profile-Dashboard-ff006e?style=for-the-badge&logo=github)](https://mdarif76769.github.io/mdarif76769/)
-[![Repositories](https://img.shields.io/badge/Repositories-100+-00ff88?style=for-the-badge&logo=github)](https://github.com/mdarif76769)
-[![Status](https://img.shields.io/badge/Status-Active-00d4ff?style=for-the-badge)](https://mdarif76769.github.io/mdarif76769/)
-
-</div>
-> *"Where Code Meets Security - Penetration Testing, Bug Bounty, and Cybersecurity Tools"*
-
----
-
-<div align="center">
-
-![Profile Views](https://komarev.com/ghpvc/?username=mdarif76769&style=flat-square&color=blueviolet)
-[![GitHub followers](https://img.shields.io/github/followers/mdarif76769?style=flat-square&color=blueviolet)](https://github.com/mdarif76769?tab=followers)
-[![GitHub Stars](https://img.shields.io/github/stars/mdarif76769?style=flat-square&color=blueviolet)](https://github.com/mdarif76769)
-
-</div>
-
----
-
+[![Profile](1779043755503.png)](https://mdarif76769.github.io/mdarif76769/)
 ## 🎯 About Me
 
 🔐 **Security Researcher** | 🎯 **Bug Bounty Hunter** | 🛡️ **Penetration Tester**
