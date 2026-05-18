@@ -1,1075 +1,1243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MDARIF76769 - Hacker Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
-
-        :root {
-            --neon-green: #00ff41;
-            --neon-cyan: #00ffff;
-            --neon-magenta: #ff00ff;
-            --neon-purple: #b300ff;
-            --neon-blue: #0088ff;
-            --dark-bg: #000000;
-            --darker-bg: #0a0014;
-            --grid-color: #00ff41;
-            --text-bright: #ffffff;
-            --text-secondary: #00ffff;
-        }
-
-        html, body {
-            height: 100%;
-            width: 100%;
-        }
-
-        body {
-            font-family: 'IBM Plex Mono', monospace;
-            background: radial-gradient(ellipse at center, #0a0014 0%, #000000 50%, #000505 100%);
-            background-attachment: fixed;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow-x: hidden;
-            color: var(--text-bright);
-        }
-
-        /* Multiple layer animated background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 200%;
-            background-image: 
-                linear-gradient(0deg, transparent 24%, rgba(0, 255, 65, 0.08) 25%, rgba(0, 255, 65, 0.08) 26%, transparent 27%, transparent 74%, rgba(0, 255, 65, 0.08) 75%, rgba(0, 255, 65, 0.08) 76%, transparent 77%, transparent),
-                linear-gradient(90deg, transparent 24%, rgba(0, 255, 255, 0.08) 25%, rgba(0, 255, 255, 0.08) 26%, transparent 27%, transparent 74%, rgba(0, 255, 255, 0.08) 75%, rgba(0, 255, 255, 0.08) 76%, transparent 77%, transparent);
-            background-size: 60px 60px;
-            pointer-events: none;
-            animation: gridMove 20s linear infinite;
-            z-index: 0;
-            opacity: 0.9;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(60px, 60px); }
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 1;
-            animation: ambientShift 10s ease-in-out infinite;
-        }
-
-        @keyframes ambientShift {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
-        }
-
-        /* Scanlines effect */
-        .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.15),
-                rgba(0, 0, 0, 0.15) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            pointer-events: none;
-            z-index: 1;
-            animation: scanlineMove 8s linear infinite;
-        }
-
-        @keyframes scanlineMove {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(10px); }
-        }
-
-        .container {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2.5rem;
-            padding: 3rem 2rem;
-            max-width: 1000px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        /* Main Title with extreme glow */
-        .title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--neon-green);
-            letter-spacing: 8px;
-            text-align: center;
-            text-transform: uppercase;
-            animation: titleGlowExtreme 3s ease-in-out infinite, titleFloat 4s ease-in-out infinite;
-            text-shadow:
-                0 0 10px var(--neon-green),
-                0 0 20px var(--neon-green),
-                0 0 30px var(--neon-green),
-                0 0 40px var(--neon-cyan),
-                0 0 60px var(--neon-cyan),
-                0 0 80px var(--neon-magenta),
-                0 0 100px var(--neon-magenta),
-                0 0 150px rgba(0, 255, 65, 0.8),
-                0 0 200px rgba(0, 255, 255, 0.6);
-            filter: brightness(1.3);
-            word-spacing: 10px;
-        }
-
-        @keyframes titleGlowExtreme {
-            0%, 100% {
-                text-shadow:
-                    0 0 10px var(--neon-green),
-                    0 0 20px var(--neon-green),
-                    0 0 30px var(--neon-green),
-                    0 0 40px var(--neon-cyan),
-                    0 0 60px var(--neon-cyan),
-                    0 0 80px var(--neon-magenta),
-                    0 0 100px var(--neon-magenta),
-                    0 0 150px rgba(0, 255, 65, 0.8),
-                    0 0 200px rgba(0, 255, 255, 0.6);
-            }
-            50% {
-                text-shadow:
-                    0 0 20px var(--neon-green),
-                    0 0 30px var(--neon-green),
-                    0 0 40px var(--neon-green),
-                    0 0 60px var(--neon-cyan),
-                    0 0 80px var(--neon-cyan),
-                    0 0 100px var(--neon-cyan),
-                    0 0 120px var(--neon-magenta),
-                    0 0 150px var(--neon-magenta),
-                    0 0 200px rgba(0, 255, 65, 1),
-                    0 0 250px rgba(0, 255, 255, 0.8);
-            }
-        }
-
-        @keyframes titleFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .subtitle {
-            color: var(--neon-cyan);
-            font-size: 1.3rem;
-            letter-spacing: 4px;
-            text-align: center;
-            text-transform: uppercase;
-            animation: subtitlePulse 2s ease-in-out infinite;
-            text-shadow: 0 0 15px var(--neon-cyan), 0 0 30px rgba(0, 255, 255, 0.5);
-            filter: brightness(1.2);
-        }
-
-        @keyframes subtitlePulse {
-            0%, 100% { opacity: 0.8; filter: brightness(1.2); }
-            50% { opacity: 1; filter: brightness(1.4); }
-        }
-
-        /* Button container with extreme glow */
-        .button-container {
-            position: relative;
-            display: inline-block;
-            margin: 2rem 0;
-        }
-
-        .glow-layer {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .glow-1 {
-            width: 400px;
-            height: 200px;
-            background: radial-gradient(ellipse at center, rgba(0, 255, 65, 0.4) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(40px);
-            animation: glowPulseGreen 3s ease-in-out infinite;
-        }
-
-        .glow-2 {
-            position: absolute;
-            width: 500px;
-            height: 250px;
-            background: radial-gradient(ellipse at center, rgba(0, 255, 255, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(50px);
-            animation: glowPulseCyan 4s ease-in-out infinite;
-        }
-
-        .glow-3 {
-            position: absolute;
-            width: 350px;
-            height: 150px;
-            background: radial-gradient(ellipse at center, rgba(255, 0, 255, 0.2) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(35px);
-            animation: glowPulseMagenta 5s ease-in-out infinite;
-        }
-
-        @keyframes glowPulseGreen {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
-        }
-
-        @keyframes glowPulseCyan {
-            0%, 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.4; }
-            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.9; }
-        }
-
-        @keyframes glowPulseMagenta {
-            0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.3; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
-        }
-
-        /* Main Button - Ultra Bright */
-        .profile-btn {
-            position: relative;
-            z-index: 2;
-            padding: 2rem 4.5rem;
-            font-size: 1.6rem;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            letter-spacing: 5px;
-            color: var(--dark-bg);
-            background: linear-gradient(135deg, var(--neon-green) 0%, var(--neon-cyan) 50%, var(--neon-green) 100%);
-            border: 4px solid var(--neon-green);
-            border-radius: 15px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 
-                0 0 20px var(--neon-green),
-                0 0 40px var(--neon-green),
-                0 0 60px var(--neon-cyan),
-                0 0 80px var(--neon-cyan),
-                0 0 100px rgba(0, 255, 65, 0.8),
-                0 0 150px rgba(0, 255, 255, 0.5),
-                inset 0 0 20px rgba(255, 255, 255, 0.4);
-            transform: translateY(0);
-            overflow: visible;
-            white-space: nowrap;
-            filter: brightness(1.3) saturate(1.2);
-            text-shadow: 
-                0 0 10px rgba(0, 0, 0, 0.5),
-                0 0 5px var(--dark-bg);
-        }
-
-        /* Button shine effect */
-        .profile-btn::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
-            transform: rotate(45deg);
-            animation: buttonShineExtreme 2s infinite;
-            z-index: 1;
-        }
-
-        @keyframes buttonShineExtreme {
-            0% { transform: translateX(-150%) translateY(-150%) rotate(45deg); }
-            100% { transform: translateX(150%) translateY(150%) rotate(45deg); }
-        }
-
-        .profile-btn:hover {
-            transform: translateY(-15px) scale(1.08);
-            border-color: var(--neon-cyan);
-            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-green) 50%, var(--neon-cyan) 100%);
-            box-shadow: 
-                0 0 30px var(--neon-green),
-                0 0 50px var(--neon-green),
-                0 0 80px var(--neon-cyan),
-                0 0 120px var(--neon-cyan),
-                0 0 150px rgba(0, 255, 65, 1),
-                0 0 200px rgba(0, 255, 255, 0.8),
-                0 0 250px rgba(0, 255, 255, 0.5),
-                inset 0 0 30px rgba(255, 255, 255, 0.5);
-            filter: brightness(1.5) saturate(1.4);
-        }
-
-        .profile-btn:active {
-            transform: translateY(-8px) scale(0.96);
-        }
-
-        .btn-icon {
-            font-size: 2rem;
-            display: inline-block;
-            animation: iconBounceExtreme 1.5s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px var(--neon-green));
-        }
-
-        @keyframes iconBounceExtreme {
-            0%, 100% { transform: translateX(0) scale(1); }
-            50% { transform: translateX(15px) scale(1.2); }
-        }
-
-        .profile-btn:hover .btn-icon {
-            animation: iconBounceExtreme 0.6s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px var(--neon-cyan));
-        }
-
-        .btn-text {
-            position: relative;
-            z-index: 3;
-            font-weight: 900;
-        }
-
-        /* Alt Buttons */
-        .buttons-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 2.5rem;
-            margin-top: 3rem;
-            width: 100%;
-        }
-
-        .alt-btn {
-            padding: 1.3rem 2.5rem;
-            font-size: 1.1rem;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: var(--neon-green);
-            background: rgba(0, 255, 65, 0.05);
-            border: 3px solid var(--neon-green);
-            border-radius: 10px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 
-                0 0 15px rgba(0, 255, 65, 0.5),
-                0 0 30px rgba(0, 255, 65, 0.2),
-                inset 0 0 10px rgba(0, 255, 65, 0.1);
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-        }
-
-        .alt-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.4), transparent);
-            transition: left 0.5s ease;
-            z-index: 0;
-        }
-
-        .alt-btn > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        .alt-btn:hover::before {
-            left: 100%;
-        }
-
-        .alt-btn:hover {
-            border-color: var(--neon-cyan);
-            color: var(--neon-cyan);
-            background: rgba(0, 255, 255, 0.1);
-            box-shadow: 
-                0 0 25px rgba(0, 255, 255, 0.8),
-                0 0 50px rgba(0, 255, 255, 0.4),
-                inset 0 0 15px rgba(0, 255, 255, 0.2);
-            transform: translateY(-6px);
-            filter: brightness(1.3);
-        }
-
-        /* Info Section */
-        .info-section {
-            margin-top: 3rem;
-            padding: 2.5rem;
-            background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, rgba(0, 255, 255, 0.02) 100%);
-            border: 3px solid var(--neon-green);
-            border-radius: 15px;
-            width: 100%;
-            max-width: 700px;
-            box-shadow: 
-                0 0 30px rgba(0, 255, 65, 0.3),
-                0 0 60px rgba(0, 255, 255, 0.2),
-                inset 0 0 20px rgba(0, 255, 65, 0.05);
-            animation: sectionGlow 4s ease-in-out infinite;
-        }
-
-        @keyframes sectionGlow {
-            0%, 100% { border-color: var(--neon-green); }
-            50% { border-color: var(--neon-cyan); }
-        }
-
-        .info-section h3 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--neon-green);
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 
-                0 0 10px var(--neon-green),
-                0 0 20px rgba(0, 255, 65, 0.5);
-            filter: brightness(1.2);
-        }
-
-        .info-section p {
-            color: var(--text-secondary);
-            line-height: 1.8;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
-        }
-
-        .info-section p strong {
-            color: var(--neon-green);
-            text-shadow: 0 0 10px var(--neon-green);
-        }
-
-        /* Features Grid */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .feature {
-            background: rgba(0, 255, 65, 0.08);
-            border: 2px solid var(--neon-green);
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
-        }
-
-        .feature:hover {
-            background: rgba(0, 255, 255, 0.1);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.8rem;
-            filter: drop-shadow(0 0 8px var(--neon-green));
-        }
-
-        .feature:hover .feature-icon {
-            filter: drop-shadow(0 0 15px var(--neon-cyan));
-        }
-
-        .feature-text {
-            font-size: 0.95rem;
-            color: var(--neon-cyan);
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* Status indicator */
-        .status {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            background: var(--neon-green);
-            border-radius: 50%;
-            margin-right: 0.8rem;
-            animation: statusPulse 1.5s ease-in-out infinite;
-            box-shadow: 0 0 10px var(--neon-green), inset 0 0 10px rgba(0, 255, 65, 0.5);
-        }
-
-        @keyframes statusPulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--neon-green), inset 0 0 10px rgba(0, 255, 65, 0.5); }
-            50% { opacity: 0.6; box-shadow: 0 0 20px var(--neon-green), inset 0 0 15px rgba(0, 255, 65, 0.8); }
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
-            color: var(--dark-bg);
-            padding: 1.2rem 2.5rem;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            z-index: 1000;
-            animation: toastSlideIn 0.4s ease;
-            box-shadow: 0 0 30px var(--neon-green), 0 0 50px var(--neon-cyan);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        @keyframes toastSlideIn {
-            from { transform: translateX(400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Spinner */
-        .spinner {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(0, 255, 65, 0.3);
-            border-top: 3px solid var(--neon-green);
-            border-radius: 50%;
-            animation: spinExtreme 0.8s linear infinite;
-            box-shadow: 0 0 10px var(--neon-green);
-        }
-
-        @keyframes spinExtreme {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Particle effect */
-        .particle {
-            position: fixed;
-            pointer-events: none;
-            opacity: 0.4;
-            font-size: 1.5rem;
-            filter: drop-shadow(0 0 5px var(--neon-green));
-        }
-
-        /* GAMES SECTION */
-        .games-section {
-            width: 100%;
-            padding: 3rem 2rem;
-            border-top: 3px dashed var(--neon-cyan);
-            background: rgba(0, 0, 0, 0.3);
-            margin-top: 2rem;
-        }
-
-        .games-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            color: var(--neon-magenta);
-            text-align: center;
-            margin-bottom: 2rem;
-            text-shadow: 0 0 20px var(--neon-magenta), 0 0 40px var(--neon-cyan);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 3;
-        }
-
-        .game-card {
-            background: linear-gradient(135deg, rgba(255, 0, 110, 0.1), rgba(0, 255, 255, 0.05));
-            border: 3px solid var(--neon-magenta);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 25px rgba(255, 0, 110, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 0, 110, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .game-card:hover::before {
-            left: 100%;
-        }
-
-        .game-card:hover {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 50px var(--neon-cyan), 0 0 25px var(--neon-magenta);
-            transform: translateY(-8px) scale(1.03);
-        }
-
-        .game-title-sm {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            color: var(--neon-cyan);
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 10px var(--neon-cyan);
-        }
-
-        .game-desc {
-            color: var(--neon-magenta);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .game-content {
-            background: rgba(0, 0, 0, 0.6);
-            border: 2px solid rgba(255, 0, 110, 0.2);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            min-height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--neon-green);
-            font-weight: bold;
-            text-align: center;
-        }
-
-        canvas {
-            width: 100% !important;
-            height: auto !important;
-            background: #000;
-            border-radius: 5px;
-        }
-
-        .game-btn {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--neon-magenta), var(--neon-cyan));
-            border: 2px solid var(--neon-magenta);
-            color: #fff;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s;
-            box-shadow: 0 0 15px var(--neon-magenta);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .game-btn:hover {
-            box-shadow: 0 0 30px var(--neon-cyan), 0 0 15px var(--neon-magenta);
-            transform: scale(1.05);
-            filter: brightness(1.2);
-        }
-
-        .score-label {
-            color: var(--neon-green);
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .title {
-                font-size: 2.5rem;
-                letter-spacing: 4px;
-            }
-
-            .profile-btn {
-                padding: 1.5rem 3rem;
-                font-size: 1.3rem;
-                letter-spacing: 3px;
-            }
-
-            .buttons-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .games-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .toast {
-                right: 15px;
-                bottom: 15px;
-                left: 15px;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .games-title {
-                font-size: 1.8rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MDARIF76769 | Cyber Security Portal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================
+   RESET
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+
+    --green:#00ffae;
+    --cyan:#00d9ff;
+    --pink:#ff0077;
+    --dark:#050816;
+}
+
+body{
+
+    font-family:'Rajdhani',sans-serif;
+
+    background:
+        radial-gradient(circle at top left, rgba(0,255,174,0.12), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(255,0,119,0.12), transparent 25%),
+        linear-gradient(135deg,#02040b,#091223,#12001f);
+
+    color:white;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    position:relative;
+}
+
+/* =========================
+   GRID BACKGROUND
+========================= */
+
+body::before{
+
+    content:'';
+
+    position:fixed;
+
+    inset:0;
+
+    background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+
+    background-size:40px 40px;
+
+    animation:gridMove 14s linear infinite;
+
+    z-index:0;
+}
+
+@keyframes gridMove{
+
+    from{
+        transform:translateY(0);
+    }
+
+    to{
+        transform:translateY(40px);
+    }
+}
+
+/* =========================
+   WELCOME SCREEN
+========================= */
+
+#welcomeScreen{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        radial-gradient(circle at center,
+        rgba(0,255,174,0.12),
+        transparent 35%),
+
+        linear-gradient(
+            135deg,
+            #01030a,
+            #07111d,
+            #12001f
+        );
+
+    z-index:999999;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+    transition:1s ease;
+}
+
+/* MATRIX */
+
+.matrix{
+
+    position:absolute;
+
+    inset:0;
+
+    overflow:hidden;
+
+    opacity:0.15;
+}
+
+.matrix span{
+
+    position:absolute;
+
+    top:-100px;
+
+    color:var(--green);
+
+    font-family:monospace;
+
+    font-size:18px;
+
+    animation:matrixFall linear infinite;
+}
+
+@keyframes matrixFall{
+
+    from{
+        transform:translateY(-100px);
+    }
+
+    to{
+        transform:translateY(120vh);
+    }
+}
+
+/* CONTENT */
+
+.welcome-content{
+
+    position:relative;
+
+    z-index:5;
+
+    width:90%;
+
+    max-width:900px;
+
+    text-align:center;
+}
+
+.welcome-title{
+
+    font-family:'Orbitron',sans-serif;
+
+    font-size:5rem;
+
+    font-weight:900;
+
+    line-height:1.1;
+
+    background:linear-gradient(
+        90deg,
+        #00ffae,
+        #00d9ff,
+        #ff0077,
+        #00ffae
+    );
+
+    background-size:300%;
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    animation:
+        gradientMove 5s linear infinite,
+        glitch 1.2s infinite;
+}
+
+@keyframes gradientMove{
+
+    from{
+        background-position:0%;
+    }
+
+    to{
+        background-position:300%;
+    }
+}
+
+@keyframes glitch{
+
+    0%,100%{
+        transform:translate(0);
+    }
+
+    20%{
+        transform:translate(-2px,2px);
+    }
+
+    40%{
+        transform:translate(2px,-2px);
+    }
+
+    60%{
+        transform:translate(-1px,1px);
+    }
+
+    80%{
+        transform:translate(1px,-1px);
+    }
+}
+
+.welcome-sub{
+
+    margin-top:18px;
+
+    color:#d3dcff;
+
+    font-size:1.2rem;
+
+    letter-spacing:4px;
+}
+
+/* TERMINAL */
+
+.loader-terminal{
+
+    margin-top:40px;
+
+    background:#020711;
+
+    border:1px solid rgba(0,255,174,0.15);
+
+    border-radius:28px;
+
+    padding:35px;
+
+    text-align:left;
+
+    color:var(--green);
+
+    font-family:monospace;
+
+    min-height:240px;
+
+    line-height:1.9;
+
+    box-shadow:
+        0 0 40px rgba(0,255,174,0.15);
+}
+
+/* BAR */
+
+.loading-bar{
+
+    margin-top:30px;
+
+    width:100%;
+
+    height:14px;
+
+    background:rgba(255,255,255,0.06);
+
+    border-radius:50px;
+
+    overflow:hidden;
+}
+
+.loading-fill{
+
+    width:0%;
+
+    height:100%;
+
+    border-radius:50px;
+
+    background:linear-gradient(
+        90deg,
+        #00ffae,
+        #00d9ff,
+        #ff0077
+    );
+
+    animation:loadBar 7s linear forwards;
+}
+
+@keyframes loadBar{
+
+    from{
+        width:0%;
+    }
+
+    to{
+        width:100%;
+    }
+}
+
+/* HIDE */
+
+.hideWelcome{
+
+    opacity:0;
+    visibility:hidden;
+}
+
+/* =========================
+   GLOWS
+========================= */
+
+.glow{
+
+    position:fixed;
+
+    border-radius:50%;
+
+    filter:blur(90px);
+
+    opacity:0.2;
+
+    z-index:0;
+}
+
+.g1{
+
+    width:300px;
+    height:300px;
+
+    background:var(--green);
+
+    top:-100px;
+    left:-100px;
+}
+
+.g2{
+
+    width:260px;
+    height:260px;
+
+    background:var(--pink);
+
+    bottom:-100px;
+    right:-100px;
+}
+
+.g3{
+
+    width:220px;
+    height:220px;
+
+    background:var(--cyan);
+
+    top:40%;
+    left:45%;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.wrapper{
+
+    position:relative;
+
+    z-index:5;
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:30px 20px;
+}
+
+.portal{
+
+    width:100%;
+
+    max-width:1300px;
+
+    display:grid;
+
+    grid-template-columns:1.1fr 0.9fr;
+
+    background:rgba(255,255,255,0.04);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(18px);
+
+    border-radius:35px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 0 60px rgba(0,255,174,0.1),
+        0 0 120px rgba(0,217,255,0.05);
+}
+
+/* LEFT */
+
+.left{
+
+    padding:70px 55px;
+}
+
+.badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:12px 18px;
+
+    border-radius:50px;
+
+    background:rgba(0,255,174,0.08);
+
+    border:1px solid rgba(0,255,174,0.18);
+
+    color:var(--green);
+}
+
+.live-dot{
+
+    width:10px;
+    height:10px;
+
+    background:var(--green);
+
+    border-radius:50%;
+
+    box-shadow:0 0 10px var(--green);
+
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+
+    0%,100%{
+        opacity:1;
+    }
+
+    50%{
+        opacity:0.4;
+    }
+}
+
+.title{
+
+    margin-top:25px;
+
+    font-family:'Orbitron',sans-serif;
+
+    font-size:4rem;
+
+    line-height:1.1;
+
+    font-weight:900;
+
+    background:linear-gradient(
+        90deg,
+        #00ffae,
+        #00d9ff,
+        #ff0077,
+        #00ffae
+    );
+
+    background-size:300%;
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    animation:gradientMove 6s linear infinite;
+}
+
+.subtitle{
+
+    margin-top:20px;
+
+    color:#c9d2ff;
+
+    line-height:1.8;
+
+    font-size:1.1rem;
+}
+
+/* BUTTONS */
+
+.button-group{
+
+    margin-top:40px;
+
+    display:flex;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+}
+
+.btn{
+
+    padding:18px 35px;
+
+    border-radius:18px;
+
+    text-decoration:none;
+
+    color:white;
+
+    font-weight:700;
+
+    transition:0.35s ease;
+
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.primary{
+
+    background:linear-gradient(
+        135deg,
+        rgba(0,255,174,0.25),
+        rgba(0,217,255,0.25)
+    );
+}
+
+.primary:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+        0 0 50px rgba(0,255,174,0.55);
+}
+
+.secondary{
+
+    background:rgba(255,255,255,0.04);
+}
+
+.secondary:hover{
+
+    transform:translateY(-8px);
+}
+
+/* FEATURES */
+
+.features{
+
+    margin-top:50px;
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:18px;
+}
+
+.feature{
+
+    background:rgba(255,255,255,0.04);
+
+    border:1px solid rgba(255,255,255,0.06);
+
+    border-radius:22px;
+
+    padding:22px;
+
+    transition:0.35s ease;
+}
+
+.feature:hover{
+
+    transform:translateY(-6px);
+
+    border-color:rgba(0,255,174,0.3);
+
+    box-shadow:
+        0 0 30px rgba(0,255,174,0.12);
+}
+
+.feature h3{
+
+    margin-top:12px;
+
+    color:var(--green);
+}
+
+.feature p{
+
+    margin-top:10px;
+
+    color:#c0c9ff;
+
+    line-height:1.6;
+}
+
+/* RIGHT */
+
+.right{
+
+    padding:40px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+}
+
+.panel{
+
+    width:100%;
+
+    background:#040814;
+
+    border-radius:30px;
+
+    padding:30px;
+
+    border:1px solid rgba(0,255,174,0.12);
+
+    box-shadow:
+        0 0 40px rgba(0,255,174,0.12);
+}
+
+.panel-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}
+
+.logo{
+
+    font-family:'Orbitron',sans-serif;
+
+    color:var(--green);
+
+    font-size:1.2rem;
+}
+
+.clock{
+
+    color:var(--cyan);
+
+    background:rgba(0,217,255,0.08);
+
+    padding:10px 14px;
+
+    border-radius:12px;
+}
+
+/* TERMINAL */
+
+.terminal{
+
+    margin-top:25px;
+
+    background:#01040b;
+
+    border-radius:22px;
+
+    padding:25px;
+
+    min-height:220px;
+
+    border:1px solid rgba(255,255,255,0.05);
+
+    color:var(--green);
+
+    font-family:monospace;
+
+    line-height:1.9;
+}
+
+/* REPO */
+
+.repo-boxes{
+
+    margin-top:22px;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:15px;
+}
+
+.repo{
+
+    background:rgba(255,255,255,0.04);
+
+    border-radius:18px;
+
+    padding:18px;
+
+    border:1px solid rgba(255,255,255,0.05);
+
+    transition:0.35s ease;
+
+    text-decoration:none;
+
+    color:white;
+}
+
+.repo:hover{
+
+    transform:translateY(-5px);
+
+    border-color:rgba(0,255,174,0.2);
+}
+
+.repo h4{
+
+    color:var(--cyan);
+}
+
+.repo p{
+
+    margin-top:8px;
+
+    color:#c0c9ff;
+
+    line-height:1.5;
+}
+
+/* STATUS */
+
+.status-box{
+
+    margin-top:22px;
+
+    background:rgba(0,255,174,0.06);
+
+    border:1px solid rgba(0,255,174,0.12);
+
+    border-radius:18px;
+
+    padding:18px 20px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:15px;
+}
+
+.status-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    color:#bfffe2;
+}
+
+.footer{
+
+    margin-top:25px;
+
+    text-align:center;
+
+    color:#98a6d8;
+
+    font-size:0.9rem;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:980px){
+
+    .portal{
+
+        grid-template-columns:1fr;
+    }
+
+    .title{
+
+        font-size:3rem;
+    }
+}
+
+@media(max-width:650px){
+
+    .welcome-title{
+
+        font-size:2.4rem;
+    }
+
+    .left{
+
+        padding:45px 25px;
+    }
+
+    .right{
+
+        padding:25px;
+    }
+
+    .title{
+
+        font-size:2.3rem;
+    }
+
+    .features{
+
+        grid-template-columns:1fr;
+    }
+
+    .repo-boxes{
+
+        grid-template-columns:1fr;
+    }
+
+    .button-group{
+
+        flex-direction:column;
+    }
+
+    .btn{
+
+        width:100%;
+
+        text-align:center;
+    }
+
+}
+
+</style>
 </head>
+
 <body>
-    <div class="scanlines"></div>
-    
-    <div class="container">
-        <h1 class="title">🔐 MDARIF76769</h1>
-        
-        <p class="subtitle">>>> HACKER SECURITY LABS <<<</p>
 
-        <!-- Main Button with multiple glows -->
-        <div class="button-container">
-            <div class="glow-layer">
-                <div class="glow-1"></div>
-                <div class="glow-2"></div>
-                <div class="glow-3"></div>
-            </div>
-            
-            <button class="profile-btn" id="mainBtn" onclick="navigateTo('dashboard')">
-                <span class="btn-icon">⚡</span>
-                <span class="btn-text">LAUNCH DASHBOARD</span>
-            </button>
+<!-- =========================
+     WELCOME SCREEN
+========================= -->
+
+<div id="welcomeScreen">
+
+    <div class="matrix" id="matrix"></div>
+
+    <div class="welcome-content">
+
+        <div class="welcome-title">
+            WELCOME TO<br>
+            MDARIF76769
         </div>
 
-        <!-- Alternative Buttons with Cyan hover -->
-        <div class="buttons-grid">
-            <a href="https://github.com/mdarif76769" target="_blank" class="alt-btn" onclick="trackClick('github')">
-                <span>🐙</span>
-                <span>GITHUB</span>
-            </a>
-            <button class="alt-btn" onclick="navigateTo('dashboard')">
-                <span>📊</span>
-                <span>DASHBOARD</span>
-            </button>
-            <a href="https://github.com/mdarif76769?tab=repositories" target="_blank" class="alt-btn" onclick="trackClick('repos')">
-                <span>📦</span>
-                <span>REPOS</span>
-            </a>
+        <div class="welcome-sub">
+            CYBER SECURITY PORTAL
         </div>
 
-        <!-- Enhanced Info Section -->
-        <div class="info-section">
-            <h3>⚡ SYSTEM STATUS: ONLINE ⚡</h3>
-            
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">🔍</div>
-                    <div class="feature-text">SEARCH</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🏷️</div>
-                    <div class="feature-text">FILTER</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">⭐</div>
-                    <div class="feature-text">SORT</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">📱</div>
-                    <div class="feature-text">MOBILE</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🚀</div>
-                    <div class="feature-text">FAST</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🔒</div>
-                    <div class="feature-text">SECURE</div>
-                </div>
-            </div>
+        <div class="loader-terminal" id="loaderTerminal"></div>
 
-            <p>
-                <span class="status"></span>
-                <strong>PENETRATION TEST FRAMEWORK ONLINE</strong>
-            </p>
-            
-            <p>
-                Access <strong>100+ HACKING TOOLS</strong> with real-time GitHub integration. 
-                Search, filter, and exploit security repositories by language, stars, and update frequency.
-            </p>
-
-            <p style="margin-top: 1rem; color: var(--neon-magenta);">
-                >> SYSTEM READY FOR BREACH ENUMERATION <<
-            </p>
+        <div class="loading-bar">
+            <div class="loading-fill"></div>
         </div>
+
     </div>
 
-    <!-- GAMES SECTION - নিচে রঙিন খেলা -->
-    <div class="games-section">
-        <h2 class="games-title">🎮 PLAY & HAVE FUN 🎮</h2>
-        
-        <div class="games-grid">
-            <!-- Game 1: Snake -->
-            <div class="game-card">
-                <h3 class="game-title-sm">🐍 SNAKE GAME</h3>
-                <p class="game-desc">Eat pixels, grow big!</p>
-                <div class="game-content">
-                    <div class="score-label">Score: <span id="snakeScore">0</span></div>
-                </div>
-                <button class="game-btn" onclick="startSnake()">START GAME</button>
-            </div>
+</div>
 
-            <!-- Game 2: Flappy -->
-            <div class="game-card">
-                <h3 class="game-title-sm">🚀 FLAPPY DRONE</h3>
-                <p class="game-desc">Avoid obstacles!</p>
-                <div class="game-content">
-                    <div class="score-label">Score: <span id="flappyScore">0</span></div>
-                </div>
-                <button class="game-btn" onclick="startFlappy()">START GAME</button>
-            </div>
+<!-- GLOWS -->
 
-            <!-- Game 3: Quiz -->
-            <div class="game-card">
-                <h3 class="game-title-sm">🧠 HACKER QUIZ</h3>
-                <p class="game-desc">Test your knowledge!</p>
-                <div class="game-content">
-                    <div class="score-label">Score: <span id="quizScore">0</span>/5</div>
-                </div>
-                <button class="game-btn" onclick="startQuiz()">START QUIZ</button>
-            </div>
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+<div class="glow g3"></div>
 
-            <!-- Game 4: Typing -->
-            <div class="game-card">
-                <h3 class="game-title-sm">⌨️ TYPING TEST</h3>
-                <p class="game-desc">Type code fast!</p>
-                <div class="game-content">
-                    <div class="score-label">WPM: <span id="wpmScore">0</span></div>
-                </div>
-                <button class="game-btn" onclick="startTypingTest()">START TEST</button>
-            </div>
+<!-- =========================
+     MAIN PAGE
+========================= -->
 
-            <!-- Game 5: Memory -->
-            <div class="game-card">
-                <h3 class="game-title-sm">🎮 MEMORY GAME</h3>
-                <p class="game-desc">Find matching pairs!</p>
-                <div class="game-content">
-                    <div class="score-label">Matches: <span id="memoryScore">0</span>/6</div>
-                </div>
-                <button class="game-btn" onclick="startMemory()">START GAME</button>
-            </div>
+<div class="wrapper">
 
-            <!-- Game 6: Clicker -->
-            <div class="game-card">
-                <h3 class="game-title-sm">💥 CLICK MASTER</h3>
-                <p class="game-desc">Click fast for 10s!</p>
-                <div class="game-content">
-                    <div class="score-label">Clicks: <span id="clickerScore">0</span></div>
-                </div>
-                <button class="game-btn" onclick="startClicker()">START GAME</button>
-            </div>
-        </div>
-    </div>
+<div class="portal">
 
-    <script>
-        // Configuration
-        const CONFIG = {
-            dashboardURL: 'https://mdarif76769.github.io/mdarif76769/Dashbord.html',
-            githubURL: 'https://github.com/mdarif76769',
-            reposURL: 'https://github.com/mdarif76769?tab=repositories',
-            fallbackURL: 'https://github.com/mdarif76769'
-        };
+<!-- LEFT -->
 
-        // Create floating particles with brightness
-        function createParticles() {
-            const container = document.body;
-            const particleCount = 30;
-            const characters = ['⚡', '🔐', '💻', '🔍', '⚙️', '🛡️', '█', '▓', '▒'];
+<div class="left">
 
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.textContent = characters[Math.floor(Math.random() * characters.length)];
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animation = `float ${5 + Math.random() * 8}s ease-in-out infinite`;
-                particle.style.color = [
-                    'var(--neon-green)',
-                    'var(--neon-cyan)',
-                    'var(--neon-magenta)'
-                ][Math.floor(Math.random() * 3)];
-                
-                container.appendChild(particle);
-            }
-        }
+<div class="badge">
+    <div class="live-dot"></div>
+    SYSTEM ACTIVE
+</div>
 
-        // Add floating animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes float {
-                0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
-                25% { transform: translateY(-40px) rotate(5deg); opacity: 0.6; }
-                50% { transform: translateY(-80px) rotate(10deg); opacity: 0.8; }
-                75% { transform: translateY(-40px) rotate(5deg); opacity: 0.6; }
-            }
-        `;
-        document.head.appendChild(style);
+<h1 class="title">
+    MDARIF76769
+</h1>
 
-        createParticles();
+<p class="subtitle">
+    Explore advanced repositories, penetration testing resources,
+    cyber security tools, GitHub projects, and futuristic dashboard access
+    through a premium neon cyber interface.
+</p>
 
-        // Show toast with brightness
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
+<div class="button-group">
 
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
+<a href="https://mdarif76769.github.io/mdarif76769/Dashbord.html"
+class="btn primary">
+🚀 OPEN DASHBOARD
+</a>
 
-        // Navigate to dashboard
-        function navigateTo(target) {
-            const btn = document.getElementById('mainBtn');
-            
-            if (target === 'dashboard') {
-                btn.classList.add('loading');
-                btn.innerHTML = '<span class="spinner"></span> <span class="btn-text">INITIALIZING...</span>';
+<a href="https://github.com/mdarif76769"
+target="_blank"
+class="btn secondary">
+🐙 GITHUB PROFILE
+</a>
 
-                setTimeout(() => {
-                    window.location.href = CONFIG.dashboardURL;
-                    
-                    setTimeout(() => {
-                        if (document.hidden === false) {
-                            showToast('⚠️ USING FALLBACK ROUTE');
-                            window.location.href = CONFIG.fallbackURL;
-                        }
-                    }, 3000);
-                }, 500);
-            }
-        }
+<a href="https://github.com/mdarif76769?tab=repositories"
+target="_blank"
+class="btn secondary">
+📦 REPOSITORIES
+</a>
 
-        // Track clicks
-        function trackClick(source) {
-            console.log('[SYSTEM LOG] Navigation requested:', source);
-        }
+</div>
 
-        // Check dashboard
-        function checkDashboardAccess() {
-            fetch(CONFIG.dashboardURL, { method: 'HEAD' })
-                .then(response => {
-                    if (!response.ok) {
-                        console.warn('[WARNING] Dashboard endpoint may be unreachable');
-                    }
-                })
-                .catch(error => {
-                    console.warn('[WARNING] Dashboard connectivity check failed:', error);
-                });
-        }
+<!-- FEATURES -->
 
-        // Keyboard shortcut
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                navigateTo('dashboard');
-            }
-            if (e.key === ' ' && e.target === document.body) {
-                e.preventDefault();
-                navigateTo('dashboard');
-            }
-        });
+<div class="features">
 
-        // Initialize
-        window.addEventListener('load', () => {
-            checkDashboardAccess();
-            showToast('🚀 SYSTEM INITIALIZATION COMPLETE');
-        });
+<div class="feature">
 
-        // Add matrix rain effect on click
-        document.addEventListener('click', (e) => {
-            const rect = document.body.getBoundingClientRect();
-            for (let i = 0; i < 5; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.textContent = '█';
-                particle.style.left = e.clientX + 'px';
-                particle.style.top = e.clientY + 'px';
-                particle.style.color = 'var(--neon-green)';
-                particle.style.position = 'fixed';
-                particle.style.animation = `float 2s ease-out forwards`;
-                particle.style.pointerEvents = 'none';
-                document.body.appendChild(particle);
-                
-                setTimeout(() => particle.remove(), 2000);
-            }
-        });
+<div style="font-size:2rem;">🔍</div>
 
-        // ========== GAMES ==========
-        function startSnake() {
-            alert('🐍 Snake game coming soon! Arrow keys to move.');
-            document.getElementById('snakeScore').textContent = Math.floor(Math.random() * 10) + 1;
-        }
+<h3>Full Search</h3>
 
-        function startFlappy() {
-            alert('🚀 Flappy Drone game coming soon! Click to fly.');
-            document.getElementById('flappyScore').textContent = Math.floor(Math.random() * 10) + 1;
-        }
+<p>
+Search repositories instantly with real-time GitHub integration.
+</p>
 
-        function startQuiz() {
-            alert('🧠 Quiz game coming soon!');
-        }
+</div>
 
-        function startTypingTest() {
-            alert('⌨️ Typing test coming soon!');
-        }
+<div class="feature">
 
-        function startMemory() {
-            alert('🎮 Memory game coming soon!');
-        }
+<div style="font-size:2rem;">🏷️</div>
 
-        function startClicker() {
-            let clicks = 0;
-            let timeLeft = 10;
-            alert('💥 Click Master - 10 seconds! Go!');
-            
-            const clickHandler = () => {
-                clicks++;
-                document.getElementById('clickerScore').textContent = clicks;
-            };
-            
-            document.addEventListener('click', clickHandler);
-            
-            setTimeout(() => {
-                document.removeEventListener('click', clickHandler);
-                alert(`Game Over! Total clicks: ${clicks}`);
-                document.getElementById('clickerScore').textContent = '0';
-            }, 10000);
-        }
-    </script>
+<h3>Language Filter</h3>
+
+<p>
+Filter repositories by programming language and technology stack.
+</p>
+
+</div>
+
+<div class="feature">
+
+<div style="font-size:2rem;">⭐</div>
+
+<h3>Sort by Stars</h3>
+
+<p>
+Browse trending repositories based on GitHub star ratings.
+</p>
+
+</div>
+
+<div class="feature">
+
+<div style="font-size:2rem;">📱</div>
+
+<h3>Mobile Ready</h3>
+
+<p>
+Fully optimized responsive dashboard for phones and tablets.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+
+<div class="right">
+
+<div class="panel">
+
+<div class="panel-top">
+
+<div class="logo">
+CYBER CORE
+</div>
+
+<div class="clock" id="clock">
+Loading...
+</div>
+
+</div>
+
+<div class="terminal" id="terminal"></div>
+
+<div class="repo-boxes">
+
+<a href="https://github.com/mdarif76769"
+target="_blank"
+class="repo">
+
+<h4>🐙 GitHub Profile</h4>
+
+<p>
+Open your GitHub profile and explore all public repositories.
+</p>
+
+</a>
+
+<a href="https://github.com/mdarif76769?tab=repositories"
+target="_blank"
+class="repo">
+
+<h4>📦 Repository Explorer</h4>
+
+<p>
+Browse repositories sorted by latest updates and popularity.
+</p>
+
+</a>
+
+<a href="https://mdarif76769.github.io/mdarif76769/Dashbord.html"
+target="_blank"
+class="repo">
+
+<h4>🚀 Live Dashboard</h4>
+
+<p>
+Launch futuristic GitHub dashboard interface.
+</p>
+
+</a>
+
+<a href="https://github.com/mdarif76769?tab=stars"
+target="_blank"
+class="repo">
+
+<h4>⭐ Starred Projects</h4>
+
+<p>
+View favorite repositories and featured projects.
+</p>
+
+</a>
+
+<a href="https://github.com/mdarif76769"
+target="_blank"
+class="repo">
+
+<h4>🛡️ Security Research</h4>
+
+<p>
+Explore cyber security and penetration testing resources.
+</p>
+
+</a>
+
+<a href="https://github.com/mdarif76769?tab=followers"
+target="_blank"
+class="repo">
+
+<h4>👥 Community</h4>
+
+<p>
+Access GitHub followers and networking section.
+</p>
+
+</a>
+
+</div>
+
+<div class="status-box">
+
+<div class="status-left">
+
+<div class="live-dot"></div>
+
+All systems operational
+
+</div>
+
+<div>
+100+ repositories connected
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 MDARIF76769 • Cyber Dashboard Interface
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+/* CLOCK */
+
+function updateClock(){
+
+    const now = new Date();
+
+    document.getElementById('clock').innerHTML =
+    '🕒 ' + now.toLocaleTimeString();
+}
+
+setInterval(updateClock,1000);
+
+updateClock();
+
+/* MAIN TERMINAL */
+
+const terminalText = `
+> Booting secure environment...
+> Connecting GitHub API...
+> Initializing cyber dashboard...
+> Loading repositories...
+> Security systems online...
+> Dashboard access granted...
+`;
+
+let terminalIndex = 0;
+
+function typeTerminal(){
+
+    if(terminalIndex < terminalText.length){
+
+        document.getElementById('terminal').innerHTML +=
+        terminalText.charAt(terminalIndex);
+
+        terminalIndex++;
+
+        setTimeout(typeTerminal,30);
+    }
+}
+
+typeTerminal();
+
+/* WELCOME TERMINAL */
+
+const loaderText = `
+> Welcome to MDARIF76769
+> Initializing cyber modules...
+> Scanning repositories...
+> Establishing secure connection...
+> Loading neon dashboard...
+> Access Granted...
+`;
+
+let loaderIndex = 0;
+
+function typeLoader(){
+
+    if(loaderIndex < loaderText.length){
+
+        document.getElementById('loaderTerminal').innerHTML +=
+        loaderText.charAt(loaderIndex);
+
+        loaderIndex++;
+
+        setTimeout(typeLoader,35);
+    }
+}
+
+typeLoader();
+
+/* MATRIX EFFECT */
+
+const matrix = document.getElementById('matrix');
+
+for(let i=0;i<120;i++){
+
+    const span = document.createElement('span');
+
+    span.innerHTML = Math.random() > 0.5 ? '1' : '0';
+
+    span.style.left = Math.random()*100 + '%';
+
+    span.style.animationDuration =
+    (5 + Math.random()*8) + 's';
+
+    span.style.animationDelay =
+    Math.random()*5 + 's';
+
+    matrix.appendChild(span);
+}
+
+/* HIDE WELCOME */
+
+window.addEventListener('load', () => {
+
+    setTimeout(() => {
+
+        document.getElementById('welcomeScreen')
+        .classList.add('hideWelcome');
+
+    },7000);
+
+});
+
+</script>
+
 </body>
 </html>
