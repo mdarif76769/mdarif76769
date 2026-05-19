@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
+    <title>Galaxy Fighter: Hardcore King's Wrath</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #020205;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            overflow: hidden;
+            position: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #gameWrapper {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            height: 100%;
+            max-height: 850px;
+            box-shadow: 0 0 40px rgba(255, 0, 85, 0.3);
+            overflow: hidden;
+            border: 2px solid #240d13;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0a0521 0%, #010106 100%);
+        }
+        /* HUD UI Design */
+        .arcade-hud {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            padding: 12px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .score-box {
+            color: #ffffff;
+            font-size: 18px;
+            text-shadow: 0 0 8px #00a2ff;
+        }
+        .live-stat {
+            color: #ff3366;
+            font-size: 13px;
+            text-align: right;
+        }
+        .bar-outer {
+            width: 80px; height: 8px;
+            background: #222; border: 1px solid #00ffcc;
+            margin-top: 2px; display: inline-block; overflow: hidden;
+            border-radius: 2px;
+        }
+        .bar-inner { width: 100%; height: 100%; background: linear-gradient(90deg, #00ffcc, #0077ff); transition: width 0.1s; }
+        
+        /* Boss HP Tracker */
+        #bossHpBox {
+            width: 100%;
+            background: rgba(30, 0, 5, 0.75);
+            border: 2px solid #ff0055;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 5px;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
+        }
+        .boss-bar-outer {
+            width: 100%; height: 12px; background: #220005;
+            border-radius: 3px; overflow: hidden; margin-top: 4px;
+            border: 1px solid #ff3366;
+        }
+        .boss-bar-inner { width: 100%; height: 100%; background: linear-gradient(90deg, #ff0033, #ffcc00, #ff0033); transition: width 0.05s; }
+
+        /* Alerts and Statuses */
+        #statusAlert {
+            position: absolute;
+            top: 130px; left: 50%;
+            transform: translateX(-50%);
+            color: #ffcc00; font-size: 14px;
+            letter-spacing: 2px; font-weight: bold;
+            opacity: 0; transition: opacity 0.3s;
+            text-shadow: 0 0 8px #ff9900;
+            pointer-events: none; z-index: 5;
+            text-align: center;
+            width: 90%;
+        }
+
+        /* Overlay Interface Panels */
+        .overlay-panel {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(3, 4, 15, 0.96);
+            backdrop-filter: blur(10px);
+            color: white; z-index: 10; padding: 25px;
+        }
+        h1 {
+            font-size: 26px; color: #ff0055; text-shadow: 0 0 15px #ff0055;
+            margin-bottom: 15px; text-align: center; letter-spacing: 1px; line-height: 1.3;
+        }
+        .menu-btn {
+            background: linear-gradient(135deg, #ff0055 0%, #ffcc00 100%);
+            color: #000; border: none; padding: 14px 45px;
+            font-size: 16px; font-weight: bold; border-radius: 4px;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(255,0,85,0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gameWrapper">
+        <div id="statusAlert">DIFFICULTY LEVEL UP</div>
+
+        <div class="arcade-hud">
+            <div class="hud-row">
+                <div class="score-box">SCORE: <span id="scoreVal">00000</span></div>
+                <div class="live-stat">
+                    <div style="color:#00b7ff">WEAPON: <span id="tierVal" style="color:#fff">LVL 1</span></div>
+                    <div>JET HP: <div class="bar-outer"><div id="hpFill" class="bar-inner"></div></div></div>
+                </div>
+            </div>
+            
+            <div id="bossHpBox">
+                <div style="color:#ff0055; font-size:13px; font-weight:bold; letter-spacing:3px; text-shadow: 0 0 5px #ff0000;">🚨 ALIEN MONSTER KING (RAJA) 🚨</div>
+                <div class="boss-bar-outer"><div id="bossHpFill" class="boss-bar-inner"></div></div>
+            </div>
+        </div>
+
+        <div id="panelStart" class="overlay-panel">
+            <h1>GALAXY FIGHTER<br><span style="color:#ffff00; font-size:16px;">THE WRATH OF THE REAL KING</span></h1>
+            <p style="font-family:sans-serif; font-size:13px; color:#a0a0c0; text-align:center; max-width:330px; margin-bottom:30px; line-height:1.7;">
+                🚀 **সাইবের উইংড জেট:** সাধারণ শত্রুদের ধ্বংস করতে **৫টি শট** লাগবে।<br><br>
+                🛡️ **ন্যানো-শিল্ড হিল:** লাইফ $50\%$ এর নিচে নামলে, নিজেকে পরবর্তী **৫ সেকেন্ড** বাঁচিয়ে রাখুন। কোনো শট না লাগলে লাইফ আবার **১০০% ফুল** হয়ে যাবে!<br><br>
+                👑 **অমর রাজা (Boss Fight):** ঠিক ১.৫ মিনিটে আসবে আসল রাজা। রাজার হেলথ এবার চরম লেভেলের করা হয়েছে, তাকে মারতে অনবরত **১০-১৫ সেকেন্ড টানা ফায়ার** করতে হবে!
+            </p>
+            <button class="menu-btn" onclick="runEngine()">LAUNCH FLIGHT</button>
+        </div>
+
+        <div id="panelOver" class="overlay-panel" style="display:none;">
+            <h1 style="color:#ff3366; text-shadow:0 0 15px #ff0000;">COCKPIT DESTROYED</h1>
+            <p style="font-size:16px; margin-bottom:25px;">Time Survived: <span id="finalTime">0</span> sec | Score: <span id="finalScore">0</span></p>
+            <button class="menu-btn" onclick="runEngine()">RE-DEPLOY SYSTEM</button>
+        </div>
+
+        <div id="panelWin" class="overlay-panel" style="display:none;">
+            <h1 style="color:#00ff66; text-shadow:0 0 20px #00ff00;">👑 STAGE 1 CLEARED: VICTORY! 👑</h1>
+            <p style="font-size:16px; margin-bottom:25px; text-align:center; color:#a0a0c0;">আপনি সফলভাবে শক্তিশালী রাজাকে পরাস্ত করেছেন!<br>গ্যালাক্সি এখন শত্রুমুক্ত।</p>
+            <button class="menu-btn" style="background:linear-gradient(135deg, #00ff66, #ffff00)" onclick="runEngine()">PLAY NEXT LEVEL</button>
+        </div>
+
+        <canvas id="stageCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('stageCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreVal = document.getElementById('scoreVal');
+        const tierVal = document.getElementById('tierVal');
+        const hpFill = document.getElementById('hpFill');
+        const bossHpBox = document.getElementById('bossHpBox');
+        const bossHpFill = document.getElementById('bossHpFill');
+        const panelStart = document.getElementById('panelStart');
+        const panelOver = document.getElementById('panelOver');
+        const panelWin = document.getElementById('panelWin');
+        const finalScore = document.getElementById('finalScore');
+        const finalTime = document.getElementById('finalTime');
+        const statusAlert = document.getElementById('statusAlert');
+
+        function resizeGrid() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeGrid);
+        resizeGrid();
+
+        let active = false;
+        let score = 0;
+        let weaponTier = 1; 
+        let totalCoresEaten = 0; 
+
+        // Time and trackers
+        let gameStartTime = 0;
+        let isBossMode = false; 
+
+        // ৫ সেকেন্ডের সেলফ-হিলিং মেকানিক্স ট্র্যাকার
+        let lastHitTime = 0;
+        let healingTriggered = false;
+
+        let fighter = { x: 0, y: 0, w: 52, h: 52, hp: 100, maxHp: 100 };
+        let enemyJets = [];
+        let lasers = [];
+        let hostileLasers = [];
+        let powerCores = []; 
+        let cosmicDust = [];
+        let sparks = [];
+
+        // 👑 রাজা (Alien King Boss) অবজেক্ট প্রোফাইল - লাইফ করা হলো ২০০ (200) যেন মরতে সময় লাগে!
+        let monsterKing = {
+            x: 0, y: -120, targetX: 240, targetY: 150,
+            w: 120, h: 100, hp: 200, maxHp: 200,
+            vx: 2.2, lastFired: 0
+        };
+
+        let lastShotFrame = 0;
+        let spawnTimer = 0;
+
+        for(let i=0; i<30; i++) {
+            cosmicDust.push({ x: Math.random()*480, y: Math.random()*850, sz: Math.random()*1.6, sp: Math.random()*1.2 + 0.4 });
+        }
+
+        // Engine Control Matrix
+        let dragAnchor = { x: 0, y: 0 }, shipAnchor = { x: 0, y: 0 };
+        window.addEventListener('touchstart', (e) => {
+            if(!active || e.touches.length === 0) return;
+            dragAnchor.x = e.touches[0].clientX; dragAnchor.y = e.touches[0].clientY;
+            shipAnchor.x = fighter.x; shipAnchor.y = fighter.y;
+        });
+        window.addEventListener('touchmove', (e) => {
+            if(!active || e.touches.length === 0) return;
+            let moveDeltaX = e.touches[0].clientX - dragAnchor.x;
+            let moveDeltaY = e.touches[0].clientY - dragAnchor.y;
+            processPosition(shipAnchor.x + moveDeltaX * 1.15, shipAnchor.y + moveDeltaY * 1.15);
+        });
+        window.addEventListener('mousemove', (e) => {
+            if(!active) return;
+            const rect = canvas.getBoundingClientRect();
+            processPosition(e.clientX - rect.left, e.clientY - rect.top);
+        });
+
+        function processPosition(tx, ty) {
+            let limitX = fighter.w/2; let limitY = fighter.h/2;
+            fighter.x = Math.max(limitX, Math.min(canvas.width - limitX, tx));
+            fighter.y = Math.max(limitY, Math.min(canvas.height - limitY, ty));
+        }
+
+        function runEngine() {
+            panelStart.style.display = 'none';
+            panelOver.style.display = 'none';
+            panelWin.style.display = 'none';
+            bossHpBox.style.display = 'none';
+            
+            score = 0; weaponTier = 1; totalCoresEaten = 0;
+            isBossMode = false; healingTriggered = false;
+            gameStartTime = performance.now();
+            lastHitTime = performance.now();
+
+            fighter.hp = 100; 
+            fighter.x = canvas.width / 2; fighter.y = canvas.height - 130;
+
+            // বসের মারাত্মক লাইফ ইন্টিগ্রেশন (২০০ হিটপয়েন্ট)
+            monsterKing.hp = 200; monsterKing.x = canvas.width / 2; monsterKing.y = -120;
+
+            enemyJets = []; lasers = []; hostileLasers = []; powerCores = []; sparks = [];
+            scoreVal.innerText = "00000"; tierVal.innerText = "LVL 1"; hpFill.style.width = "100%";
+            bossHpFill.style.width = "100%";
+            
+            active = true;
+            lastShotFrame = performance.now();
+            requestAnimationFrame(engineLoop);
+        }
+
+        function triggerBurstSparks(x, y, color, amount=12) {
+            for(let i=0; i<amount; i++) {
+                sparks.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 0.5) * 7,
+                    r: Math.random() * 2.2 + 1, a: 1, c: color
+                });
+            }
+        }
+
+        function drawHighProfileJet(x, y, w, h, isHostile, isKing=false) {
+            ctx.save();
+            ctx.translate(x, y);
+            if(isHostile) ctx.rotate(Math.PI);
+
+            if (isKing) {
+                // 👑 দানবীয় রাজকীয় এলিয়েন কিং ডিজাইন (বিশাল সাইজ ও ডাবল আর্মার উইংস)
+                ctx.fillStyle = Math.random() > 0.4 ? '#ff0033' : '#ffea00';
+                ctx.fillRect(-25, h/2, 12, 18); ctx.fillRect(13, h/2, 12, 18); // ডাবল হেভি ইঞ্জিন ফ্লেম
+                
+                // ডার্ক রেড অ্যান্ড গোল্ডেন মেটাল উইংস
+                ctx.fillStyle = '#300212';
+                ctx.beginPath(); 
+                ctx.moveTo(0, -h/2); 
+                ctx.lineTo(-w/2, -h/5); 
+                ctx.lineTo(-w/2 - 10, h/4); 
+                ctx.lineTo(-w/4, h/2);
+                ctx.lineTo(0, h/3); 
+                ctx.lineTo(w/4, h/2);
+                ctx.lineTo(w/2 + 10, h/4); 
+                ctx.lineTo(w/2, -h/5); 
+                ctx.closePath(); ctx.fill();
+
+                // গোল্ডেন নিওন বর্ডার স্ট্রোক
+                ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 4; ctx.stroke();
+
+                // মেইন এনার্জি ক্রিস্টাল কোর (চোখ)
+                ctx.fillStyle = '#ff0055';
+                ctx.beginPath(); ctx.arc(0, -h/10, 18, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(0, -h/10, 6, 0, Math.PI*2); ctx.fill();
+            } 
+            else if (isHostile) {
+                // 😈 ডেভিল উইংড ক্রাফট শত্রু বিমান
+                ctx.fillStyle = '#ff3300';
+                ctx.fillRect(-4, h/2, 8, 10); 
+                ctx.fillStyle = '#ff2255'; 
+                ctx.beginPath();
+                ctx.moveTo(0, -h/2); ctx.lineTo(-w/2, h/3); ctx.lineTo(-w/6, h/4); ctx.lineTo(0, h/2);
+                ctx.lineTo(w/6, h/4); ctx.lineTo(w/2, h/3); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#110005';
+                ctx.fillRect(-3, -h/6, 6, 8);
+            } 
+            else {
+                // 🚀 মেইন প্লেয়ারের হাই-প্রোফাইল সাইবার উইংড জেট
+                ctx.fillStyle = Math.random() > 0.4 ? '#00ffff' : '#0077ff';
+                ctx.fillRect(-12, h/2 - 2, 5, Math.random()*15 + 6);
+                ctx.fillRect(7, h/2 - 2, 5, Math.random()*15 + 6);
+
+                ctx.fillStyle = '#00bcff'; 
+                ctx.beginPath();
+                ctx.moveTo(-w/2, h/4); ctx.lineTo(-w/3, -h/6); ctx.lineTo(0, h/6); ctx.lineTo(w/3, -h/6); ctx.lineTo(w/2, h/4);
+                ctx.lineTo(0, h/2); ctx.closePath(); ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(0, -h/2); 
+                ctx.lineTo(-w/4, -h/10); ctx.lineTo(-w/4, h/3); ctx.lineTo(0, h/2 - 4);
+                ctx.lineTo(w/4, h/3); ctx.lineTo(w/4, -h/10);
+                ctx.closePath(); ctx.fill();
+
+                ctx.fillStyle = '#0a152d';
+                ctx.beginPath(); ctx.arc(0, -h/12, w/7, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        function engineLoop(timestamp) {
+            if(!active) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            let elapsedTime = (timestamp - gameStartTime) / 1000; 
+
+            // 👑 ঠিক ১.৫ মিনিট (৯০ সেকেন্ড) পর রাজা আসবে!
+            if (elapsedTime >= 90 && !isBossMode) {
+                isBossMode = true;
+                bossHpBox.style.display = 'flex';
+                showStatusAlert("👑 ATTENTION: ALIEN MONSTER KING HAS LANDED! 👑");
+            }
+
+            // 🛡️ ৫ সেকেন্ড রিকভারি মেকানিক্স প্রসেসিং
+            let secondsSinceLastHit = (timestamp - lastHitTime) / 1000;
+            if (fighter.hp <= 50 && fighter.hp > 0) {
+                let timeLeft = Math.ceil(5 - secondsSinceLastHit);
+                if (timeLeft > 0) {
+                    showStatusAlert(`🛡️ SHIELD RECHARGING IN ${timeLeft}s... KEEP DODGING!`);
+                } else if (!healingTriggered) {
+                    fighter.hp = 100; 
+                    hpFill.style.width = "100%";
+                    triggerBurstSparks(fighter.x, fighter.y, '#00ffcc', 20);
+                    showStatusAlert("⚡ SHIELD FULLY CHARGED! COCKPIT HP 100% ⚡");
+                    healingTriggered = true;
+                }
+            }
+
+            // Space Dust Motion
+            ctx.fillStyle = '#ffffff';
+            cosmicDust.forEach(star => {
+                star.y += isBossMode ? star.sp * 0.35 : star.sp; 
+                if(star.y > canvas.height) { star.y = 0; star.x = Math.random()*canvas.width; }
+                ctx.globalAlpha = 0.15; ctx.fillRect(star.x, star.y, star.sz, star.sz);
+            });
+            ctx.globalAlpha = 1.0;
+
+            // Player Gun Core Systems
+            let cooldown = 145; 
+            if(timestamp - lastShotFrame > cooldown) {
+                let spreadDistanceModifier = fighter.w * 0.35;
+                if (weaponTier === 1) {
+                    lasers.push({ x: fighter.x, y: fighter.y - fighter.h/2, vx: 0, vy: -17 });
+                } else if (weaponTier === 2) {
+                    lasers.push({ x: fighter.x - 8, y: fighter.y - fighter.h/2, vx: 0, vy: -18 });
+                    lasers.push({ x: fighter.x + 8, y: fighter.y - fighter.h/2, vx: 0, vy: -18 });
+                } else if (weaponTier === 3) {
+                    lasers.push({ x: fighter.x, y: fighter.y - fighter.h/2, vx: 0, vy: -19 });
+                    lasers.push({ x: fighter.x - spreadDistanceModifier, y: fighter.y - fighter.h/4, vx: -2.0, vy: -17 });
+                    lasers.push({ x: fighter.x + spreadDistanceModifier, y: fighter.y - fighter.h/4, vx: 2.0, vy: -17 });
+                } else { 
+                    lasers.push({ x: fighter.x, y: fighter.y - fighter.h/2, vx: 0, vy: -20 });
+                    lasers.push({ x: fighter.x - 10, y: fighter.y - fighter.h/2, vx: -1.0, vy: -19 });
+                    lasers.push({ x: fighter.x + 10, y: fighter.y - fighter.h/2, vx: 1.0, vy: -19 });
+                    lasers.push({ x: fighter.x - spreadDistanceModifier * 1.3, y: fighter.y, vx: -3.8, vy: -17 });
+                    lasers.push({ x: fighter.x + spreadDistanceModifier * 1.3, y: fighter.y, vx: 3.8, vy: -17 });
+                }
+                lastShotFrame = timestamp;
+            }
+
+            // Draw Lasers
+            lasers.forEach((laser, lIdx) => {
+                laser.x += laser.vx; laser.y += laser.vy;
+                ctx.fillStyle = '#00ffcc';
+                ctx.fillRect(laser.x - 2, laser.y, 4, 14);
+                if(laser.y < 0 || laser.x < 0 || laser.x > canvas.width) lasers.splice(lIdx, 1);
+            });
+
+            // 👾 সাধারণ শত্রু ম্য্যাট্রিক্স
+            if (!isBossMode) {
+                spawnTimer++;
+                if(spawnTimer > 38) { 
+                    enemyJets.push({
+                        x: Math.random() * (canvas.width - 60) + 30, y: -45, 
+                        vx: (Math.random() - 0.5) * 1.5, vy: Math.random() * 1.0 + 2.4,
+                        w: 38, h: 38, 
+                        hitCount: 0, 
+                        lastFired: 0
+                    });
+                    spawnTimer = 0;
+                }
+
+                enemyJets.forEach((enemy, eIdx) => {
+                    enemy.x += enemy.vx; enemy.y += enemy.vy;
+                    drawHighProfileJet(enemy.x, enemy.y, enemy.w, enemy.h, true);
+
+                    if(timestamp - enemy.lastFired > 900) { 
+                        hostileLasers.push({ x: enemy.x, y: enemy.y + enemy.h/2, vy: 4.8 }); 
+                        enemy.lastFired = timestamp;
+                    }
+
+                    lasers.forEach((l, lIdx) => {
+                        if(Math.hypot(l.x - enemy.x, l.y - enemy.y) < (enemy.w/2 + 5)) {
+                            enemy.hitCount++; 
+                            triggerBurstSparks(l.x, l.y, '#00ffcc', 4);
+                            lasers.splice(lIdx, 1);
+
+                            // ৫টি গুলি লাগলে তবেই সাধারণ শত্রু ধ্বংস হবে
+                            if(enemy.hitCount >= 5) {
+                                triggerBurstSparks(enemy.x, enemy.y, '#ff3300', 14);
+                                score += 100; scoreVal.innerText = String(score).padStart(5, '0');
+                                if(Math.random() > 0.45) powerCores.push({ x: enemy.x, y: enemy.y, r: 8 });
+                                enemyJets.splice(eIdx, 1);
+                            }
+                        }
+                    });
+
+                    if(enemy.y > canvas.height + 50 || enemy.x < -50 || enemy.x > canvas.width + 50) {
+                        enemyJets.splice(eIdx, 1);
+                    }
+                });
+            } 
+            else {
+                // 👑 রাজা (Alien King) এন্ট্রি ও হেভি মুভমেন্ট
+                if (monsterKing.y < monsterKing.targetY) {
+                    monsterKing.y += 1.0; 
+                } else {
+                    monsterKing.x += monsterKing.vx;
+                    if (monsterKing.x > canvas.width - monsterKing.w/2 || monsterKing.x < monsterKing.w/2) {
+                        monsterKing.vx *= -1;
+                    }
+                }
+
+                drawHighProfileJet(monsterKing.x, monsterKing.y, monsterKing.w, monsterKing.h, true, true);
+
+                // রাজার বিধ্বংসী ট্রিপল লেজার স্প্রে
+                if (timestamp - monsterKing.lastFired > 450) {
+                    hostileLasers.push({ x: monsterKing.x - 30, y: monsterKing.y + monsterKing.h/3, vy: 5.2 });
+                    hostileLasers.push({ x: monsterKing.x + 30, y: monsterKing.y + monsterKing.h/3, vy: 5.2 });
+                    hostileLasers.push({ x: monsterKing.x, y: monsterKing.y + monsterKing.h/2, vy: 5.8 });
+                    monsterKing.lastFired = timestamp;
+                }
+
+                // রাজার বডিতে প্লেয়ারের লেজার শট ডিটেকশন (২০০ লাইফ কমানোর লজিক)
+                lasers.forEach((l, lIdx) => {
+                    if (Math.hypot(l.x - monsterKing.x, l.y - monsterKing.y) < (monsterKing.w/2)) {
+                        monsterKing.hp--; 
+                        triggerBurstSparks(l.x, l.y, '#ffea00', 5);
+                        lasers.splice(lIdx, 1);
+
+                        // বসের লাইফ বার রিয়েল-টাইম আপডেট
+                        bossHpFill.style.width = `${(monsterKing.hp / monsterKing.maxHp) * 100}%`;
+
+                        // 🏆 ২০০ টা শট লাগার পর রাজা অবশেষে খতম হবে! (টানা ১০-১৫ সেকেন্ড ফায়ার)
+                        if (monsterKing.hp <= 0) {
+                            triggerBurstSparks(monsterKing.x, monsterKing.y, '#ffcc00', 50);
+                            triggerBurstSparks(monsterKing.x, monsterKing.y, '#ff0055', 50);
+                            active = false;
+                            panelWin.style.display = 'flex';
+                        }
+                    }
+                });
+            }
+
+            // ⚡ পাওয়ার কোর ভক্ষণ লজিক
+            powerCores.forEach((core, cIdx) => {
+                core.y += 2.0;
+                ctx.save();
+                ctx.shadowBlur = 10; ctx.shadowColor = '#ffff00';
+                ctx.fillStyle = '#ffff00';
+                ctx.font = '22px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('⚡', core.x, core.y);
+                ctx.restore();
+
+                if(Math.hypot(core.x - fighter.x, core.y - fighter.y) < (core.r + fighter.w/2)) {
+                    triggerBurstSparks(core.x, core.y, '#ffff00', 12);
+                    score += 150; scoreVal.innerText = String(score).padStart(5, '0');
+                    totalCoresEaten++;
+
+                    if (totalCoresEaten >= 3 && weaponTier === 1) { weaponTier = 2; tierVal.innerText = "LVL 2: DUAL"; }
+                    else if (totalCoresEaten >= 6 && weaponTier === 2) { weaponTier = 3; tierVal.innerText = "LVL 3: TRI-BEAM"; }
+                    else if (totalCoresEaten >= 10 && weaponTier === 3) { weaponTier = 4; tierVal.innerText = "LVL 4: MAX HYPER"; }
+
+                    powerCores.splice(cIdx, 1);
+                }
+                if(core.y > canvas.height) powerCores.splice(cIdx, 1);
+            });
+
+            // Hostile Enemy Laser vs Player Head Hitbox
+            hostileLasers.forEach((hl, hlIdx) => {
+                hl.y += hl.vy;
+                ctx.fillStyle = '#ff1155';
+                ctx.fillRect(hl.x - 1.5, hl.y, 3, 12);
+
+                let headBoxX = fighter.x;
+                let headBoxY = fighter.y - (fighter.h / 2);
+                let headHitboxRadius = 8; 
+
+                ctx.strokeStyle = 'rgba(0, 255, 234, 0.4)';
+                ctx.beginPath(); ctx.arc(headBoxX, headBoxY, headHitboxRadius, 0, Math.PI*2); ctx.stroke();
+
+                if(Math.hypot(hl.x - headBoxX, hl.y - headBoxY) < headHitboxRadius) {
+                    fighter.hp -= 34; 
+                    hpFill.style.width = `${Math.max(0, fighter.hp)}%`;
+                    triggerBurstSparks(hl.x, hl.y, '#ff0055', 12);
+                    
+                    lastHitTime = timestamp; 
+                    healingTriggered = false;
+
+                    hostileLasers.splice(hlIdx, 1);
+
+                    if(fighter.hp <= 0) terminateMatch(elapsedTime);
+                } 
+                else if (Math.hypot(hl.x - fighter.x, hl.y - fighter.y) < (fighter.w * 0.5)) {
+                    triggerBurstSparks(hl.x, hl.y, '#ffffff', 2);
+                    hostileLasers.splice(hlIdx, 1);
+                }
+
+                if(hl.y > canvas.height) hostileLasers.splice(hlIdx, 1);
+            });
+
+            // Player Jet Rendering
+            drawHighProfileJet(fighter.x, fighter.y, fighter.w, fighter.h, false);
+
+            // Particle Handler
+            sparks.forEach((p, sIdx) => {
+                p.x += p.vx; p.y += p.vy; p.a -= 0.04;
+                if(p.a <= 0) { sparks.splice(sIdx, 1); }
+                else {
+                    ctx.globalAlpha = p.a; ctx.fillStyle = p.c;
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+                }
+            });
+            ctx.globalAlpha = 1.0;
+
+            requestAnimationFrame(engineLoop);
+        }
+
+        function showStatusAlert(text) {
+            statusAlert.innerText = text;
+            statusAlert.style.opacity = 1;
+            if(text.includes("FULLY") || text.includes("LANDED")) {
+                setTimeout(() => { statusAlert.style.opacity = 0; }, 2500);
+            }
+        }
+
+        function terminateMatch(totalSecs) {
+            active = false;
+            finalScore.innerText = score;
+            finalTime.innerText = Math.floor(totalSecs);
+            panelOver.style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
