@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Carrom Pro - Queen Cover Perfect Fixed</title>
+    <style>
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-touch-callout: none; -webkit-user-select: none;
+            user-select: none; touch-action: none;
+        }
+        html, body {
+            width: 100%; height: 100%; background: #020508;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
+        }
+        
+        #modeOverlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 7, 12, 0.95); z-index: 10; display: flex;
+            flex-direction: column; justify-content: center; align-items: center; gap: 25px;
+            backdrop-filter: blur(10px); transition: all 0.4s ease;
+        }
+        .menu-title {
+            color: #ffffff; font-size: 28px; font-weight: 900; letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(0, 255, 204, 0.4); text-align: center;
+        }
+        .menu-btn {
+            width: 240px; padding: 16px; font-size: 16px; font-weight: bold;
+            color: #ffffff; background: #0f172a; border: 2px solid #00ffcc;
+            border-radius: 30px; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); text-transform: uppercase;
+        }
+        .menu-btn:hover {
+            background: #00ffcc; color: #020508; box-shadow: 0 0 25px #00ffcc;
+            transform: scale(1.05);
+        }
+        .menu-btn.vs-player { border-color: #ff4757; box-shadow: 0 0 15px rgba(255, 71, 87, 0.2); }
+        .menu-btn.vs-player:hover { background: #ff4757; color: #ffffff; box-shadow: 0 0 25px #ff4757; }
+
+        #gameApp {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            align-items: center; padding: 12px 10px; z-index: 1; max-width: 450px; opacity: 0; pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .player-panel-top {
+            width: 100%; background: linear-gradient(135deg, #0f151d, #1e293b); border: 2px solid #ff4757;
+            border-radius: 16px; padding: 10px 16px; display: flex;
+            justify-content: space-between; align-items: center; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+        .player-panel-bottom {
+            width: 100%; background: linear-gradient(135deg, #0f151d, #1e293b); border: 2px solid #00ffcc;
+            border-radius: 16px; padding: 10px 16px; display: flex;
+            justify-content: space-between; align-items: center; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .avatar-head {
+            width: 42px; height: 42px; background: #1e293b; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; border: 2px solid #7f8c8d; position: relative;
+        }
+        .avatar-head::before { content: ''; position: absolute; top: 8px; width: 14px; height: 14px; background: #94a3b8; border-radius: 50%; }
+        .avatar-head::after { content: ''; position: absolute; bottom: 4px; width: 24px; height: 10px; background: #94a3b8; border-radius: 10px 10px 0 0; }
+        .coin-indicator { width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-left: 5px; vertical-align: middle; box-shadow: inset 0 2px 4px rgba(255,255,255,0.3); }
+        .white-ind { background: #ffffff; border: 1px solid #ccc; }
+        .black-ind { background: #1e252b; border: 1px solid #000; }
+        
+        .meta-info { display: flex; flex-direction: column; }
+        .player-name { font-size: 13px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; }
+        .assigned-piece { font-size: 10px; color: #94a3b8; margin-top: 1px; }
+        
+        #turnStatusBadge {
+            font-size: 11px; font-weight: bold; padding: 6px 16px; border-radius: 20px;
+            text-align: center; letter-spacing: 1px; background: rgba(0, 255, 204, 0.1);
+            border: 1px solid #00ffcc; color: #00ffcc; box-shadow: 0 0 10px rgba(0,255,204,0.1);
+        }
+        .score-display { font-size: 26px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        
+        .board-wrapper {
+            width: 100%; aspect-ratio: 1 / 1; background: #120600;
+            border-radius: 20px; padding: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 4px 10px rgba(255,255,255,0.1);
+            position: relative;
+        }
+        .canvas-holder { 
+            width: 100%; height: 100%; border-radius: 6px; overflow: hidden; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        canvas { display: block; width: 100%; height: 100%; }
+        
+        .action-deck {
+            width: 100%; background: #090d16; padding: 12px; border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .slider-box { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .slider-title { font-size: 11px; color: #94a3b8; font-weight: bold; margin-bottom: 4px; }
+        input[type=range] { width: 92%; -webkit-appearance: none; background: transparent; height: 30px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #020406; border-radius: 3px; }
+        input[type=range]::-webkit-slider-thumb {
+            height: 26px; width: 26px; border-radius: 50%; background: #ffffff;
+            border: 4px solid #00ffcc; cursor: pointer; -webkit-appearance: none; margin-top: -10px; box-shadow: 0 0 10px #00ffcc;
+        }
+        .reset-btn { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: #e2e8f0; padding: 8px 24px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        .reset-btn:hover { background: #ff4757; border-color: #ff4757; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="modeOverlay">
+        <div class="menu-title">CARROM PRO<br><span style="font-size: 14px; color: #94a3b8; font-weight: normal;">SELECT GAME MODE</span></div>
+        <button class="menu-btn" onclick="selectGameMode('ai')">🤖 VS AI (Computer)</button>
+        <button class="menu-btn vs-player" onclick="selectGameMode('pvp')">👥 Pass & Play</button>
+    </div>
+
+    <div id="gameApp">
+        <div class="player-panel-top">
+            <div class="user-profile">
+                <div class="avatar-head" id="p2Avatar" style="border-color: #ff4757;"></div>
+                <div class="meta-info">
+                    <span class="player-name" id="p2Name">PLAYER 2</span>
+                    <span class="assigned-piece">কালো গুটি <span class="coin-indicator black-ind"></span></span>
+                </div>
+            </div>
+            <div id="p2Score" class="score-display" style="color: #ff4757;">0</div>
+        </div>
+
+        <div id="turnStatusBadge">PLAYER 1 TURN</div>
+
+        <div class="board-wrapper">
+            <div class="canvas-holder">
+                <canvas id="mainCarromCanvas"></canvas>
+            </div>
+        </div>
+
+        <div class="action-deck">
+            <div class="slider-box">
+                <div class="slider-title" id="controlGuide">PLAYER 1: স্ট্রাইকার পজিশন সেট করুন</div>
+                <input type="range" id="positionSlider" min="95" max="505" value="300" oninput="liveSliderMove(this.value)">
+            </div>
+            <button class="reset-btn" onclick="quitToMainMenu()">MAIN MENU</button>
+        </div>
+
+        <div class="player-panel-bottom">
+            <div class="user-profile">
+                <div class="avatar-head" style="border-color: #00ffcc;"></div>
+                <div class="meta-info">
+                    <span class="player-name">PLAYER 1</span>
+                    <span class="assigned-piece">সাদা গুটি <span class="coin-indicator white-ind"></span></span>
+                </div>
+            </div>
+            <div id="p1Score" class="score-display" style="color: #00ffcc;">0</div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mainCarromCanvas');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('positionSlider');
+        const turnStatusBadge = document.getElementById('turnStatusBadge');
+        const controlGuide = document.getElementById('controlGuide');
+
+        const size = 600;
+        canvas.width = size; canvas.height = size;
+
+        let gameMode = 'pvp'; 
+        let activePlayer = 1; 
+        let matchScores = { p1: 0, p2: 0 };
+        let strikerActiveMoving = false; 
+        let aiThinking = false;
+
+        const gameFriction = 0.982; 
+        const pieceRadius = 14;     
+        const strikerRadius = 19;   
+        const innerBorder = 44, outerBorder = size - 44;
+        const pocketRadius = 24;
+
+        const pockets = [
+            { x: 44, y: 44 }, { x: size - 44, y: size - 44 },
+            { x: 44, y: size - 44 }, { x: size - 44, y: 44 }
+        ];
+
+        const p1BaseY = size - 110; 
+        const p2BaseY = 110;        
+
+        let striker = { x: size / 2, y: p1BaseY, vx: 0, vy: 0, radius: strikerRadius, placed: true };
+        let pieces = [];
+        let isAiming = false;
+        let pullPoint = { x: 0, y: 0 };
+        
+        // 👑 রানী এবং কাভার ট্র্যাকিং স্টেট ইঞ্জিন (সম্পূর্ণ নতুন)
+        let shotOwnPiecePotted = false;
+        let queenPottedThisShot = false;
+        let queenPottedWaitingForCover = false;
+        let queenOwner = 0; 
+
+        let framesSinceShotFired = 0;
+        const MIN_REQUIRED_FRAMES = 30; // ফ্রেম বাফার আরও বাড়িয়ে ৩০ করা হলো যেন সব যাচাই করার সময় পায়
+
+        function selectGameMode(mode) {
+            gameMode = mode;
+            document.getElementById('modeOverlay').style.opacity = '0';
+            document.getElementById('modeOverlay').style.pointerEvents = 'none';
+            document.getElementById('gameApp').style.opacity = '1';
+            document.getElementById('gameApp').style.pointerEvents = 'all';
+            
+            if(mode === 'ai') {
+                document.getElementById('p2Name').innerText = "AI BOT (ROBOT)";
+                document.getElementById('p2Avatar').style.borderColor = "#94a3b8";
+            } else {
+                document.getElementById('p2Name').innerText = "PLAYER 2";
+                document.getElementById('p2Avatar').style.borderColor = "#ff4757";
+            }
+            triggerMatchReset();
+        }
+
+        function quitToMainMenu() {
+            document.getElementById('modeOverlay').style.opacity = '1';
+            document.getElementById('modeOverlay').style.pointerEvents = 'all';
+            document.getElementById('gameApp').style.opacity = '0';
+            document.getElementById('gameApp').style.pointerEvents = 'none';
+        }
+
+        function triggerMatchReset() {
+            matchScores.p1 = 0; matchScores.p2 = 0;
+            document.getElementById('p1Score').innerText = 0;
+            document.getElementById('p2Score').innerText = 0;
+            
+            activePlayer = 1; 
+            strikerActiveMoving = false;
+            shotOwnPiecePotted = false;
+            queenPottedThisShot = false;
+            queenPottedWaitingForCover = false;
+            queenOwner = 0;
+            aiThinking = false;
+            framesSinceShotFired = 0;
+            
+            generateFlatPieces();
+            applyTurnConfigurations();
+        }
+
+        function generateFlatPieces() {
+            pieces = [];
+            const cx = size / 2, cy = size / 2;
+            pieces.push({ x: cx, y: cy, vx: 0, vy: 0, radius: pieceRadius, type: 'queen', mainColor: '#ff2e63', innerColor: '#ffffff' });
+            
+            for (let i = 0; i < 6; i++) {
+                let angle = (i * Math.PI * 2) / 6;
+                let dist = pieceRadius * 2.15;
+                let type = (i % 2 === 0) ? 'white' : 'black';
+                pieces.push({ x: cx + Math.cos(angle) * dist, y: cy + Math.sin(angle) * dist, vx: 0, vy: 0, radius: pieceRadius, type: type, mainColor: type === 'white' ? '#f8fafc' : '#1e293b', innerColor: type === 'white' ? '#cbd5e1' : '#0f172a' });
+            }
+
+            for (let i = 0; i < 12; i++) {
+                let angle = (i * Math.PI * 2) / 12 + (Math.PI / 6);
+                let dist = pieceRadius * 4.2;
+                let type = (i % 2 === 0) ? 'white' : 'black';
+                pieces.push({ x: cx + Math.cos(angle) * dist, y: cy + Math.sin(angle) * dist, vx: 0, vy: 0, radius: pieceRadius, type: type, mainColor: type === 'white' ? '#f8fafc' : '#1e293b', innerColor: type === 'white' ? '#cbd5e1' : '#0f172a' });
+            }
+        }
+
+        function applyTurnConfigurations() {
+            isAiming = false; 
+            striker.vx = 0; striker.vy = 0;
+            let targetY = (activePlayer === 1) ? p1BaseY : p2BaseY;
+            
+            let safeX = 300;
+            for (let xCheck = 300; xCheck <= 505; xCheck += 5) {
+                if (!isPieceOverlappingBaseline(xCheck, targetY)) { safeX = xCheck; break; }
+            }
+            striker.x = safeX; striker.y = targetY; striker.placed = true; slider.value = safeX;
+
+            if (activePlayer === 1) {
+                turnStatusBadge.innerText = queenPottedWaitingForCover ? "PLAYER 1: কাভার শট দিন! 👑" : "PLAYER 1 TURN"; 
+                turnStatusBadge.style.color = "#00ffcc";
+                turnStatusBadge.style.borderColor = "#00ffcc"; turnStatusBadge.style.background = "rgba(0, 255, 204, 0.08)";
+                controlGuide.innerText = "PLAYER 1: স্ট্রাইকার পজিশন সেট করুন"; controlGuide.style.color = "#00ffcc";
+            } else {
+                let p2Color = (gameMode === 'ai') ? "#94a3b8" : "#ff4757";
+                turnStatusBadge.innerText = (gameMode === 'ai') ? (queenPottedWaitingForCover ? "AI BOT: কাভার শট দিচ্ছে... 👑" : "AI BOT THINKING...") : (queenPottedWaitingForCover ? "PLAYER 2: কাভার শট দিন! 👑" : "PLAYER 2 TURN"); 
+                turnStatusBadge.style.color = p2Color;
+                turnStatusBadge.style.borderColor = p2Color; turnStatusBadge.style.background = "rgba(255, 71, 87, 0.08)";
+                controlGuide.innerText = (gameMode === 'ai') ? "কম্পিউটার চাল হিসাব করছে..." : "PLAYER 2: স্ট্রাইকার পজিশন সেট করুন"; 
+                controlGuide.style.color = p2Color;
+
+                if(gameMode === 'ai' && !aiThinking) {
+                    aiThinking = true;
+                    setTimeout(executeAISmartTurn, 1000);
+                }
+            }
+        }
+
+        function executeAISmartTurn() {
+            if (activePlayer !== 2 || strikerActiveMoving) { aiThinking = false; return; }
+
+            let targetPieces = pieces.filter(p => p.type === 'black');
+            if(!queenPottedWaitingForCover && pieces.some(p => p.type === 'queen')) {
+                targetPieces.push(pieces.find(p => p.type === 'queen'));
+            }
+            if(targetPieces.length === 0) targetPieces = pieces; 
+
+            if(targetPieces.length > 0) {
+                let bestTarget = targetPieces[0];
+                let minDist = 9999;
+                targetPieces.forEach(p => {
+                    let d = Math.hypot(p.x - striker.x, p.y - striker.y);
+                    if(d < minDist) { minDist = d; bestTarget = p; }
+                });
+
+                let idealX = Math.max(120, Math.min(480, bestTarget.x + (Math.random() * 60 - 30)));
+                striker.x = idealX;
+                slider.value = idealX;
+
+                setTimeout(() => {
+                    if (activePlayer !== 2) { aiThinking = false; return; }
+                    let angle = Math.atan2(bestTarget.y - striker.y, bestTarget.x - striker.x);
+                    let force = 16 + Math.random() * 6; 
+
+                    striker.vx = Math.cos(angle) * force;
+                    striker.vy = Math.sin(angle) * force;
+                    striker.placed = false;
+                    strikerActiveMoving = true;
+                    shotOwnPiecePotted = false;
+                    queenPottedThisShot = false; // শট মারার আগে রিসেট
+                    framesSinceShotFired = 0; 
+                    aiThinking = false;
+                }, 600);
+            } else {
+                aiThinking = false;
+                activePlayer = 1;
+                applyTurnConfigurations();
+            }
+        }
+
+        function isPieceOverlappingBaseline(x, y) {
+            for (let i = 0; i < pieces.length; i++) {
+                if (Math.hypot(pieces[i].x - x, pieces[i].y - y) < (pieces[i].radius + strikerRadius + 2)) return true;
+            }
+            return false;
+        }
+
+        function liveSliderMove(val) {
+            if (!striker.placed || strikerActiveMoving || (gameMode === 'ai' && activePlayer === 2)) return;
+            let targetX = parseInt(val);
+            let targetY = (activePlayer === 1) ? p1BaseY : p2BaseY;
+            if (!isPieceOverlappingBaseline(targetX, targetY)) striker.x = targetX;
+        }
+
+        function extractTouchCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            let cX = e.touches ? e.touches[0].clientX : e.clientX;
+            let cY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: ((cX - rect.left) / rect.width) * size, y: ((cY - rect.top) / rect.height) * size };
+        }
+
+        function processPointerDown(e) {
+            if (!striker.placed || strikerActiveMoving) return;
+            if (gameMode === 'ai' && activePlayer === 2) return; 
+            const pos = extractTouchCoords(e);
+            if (Math.hypot(pos.x - striker.x, pos.y - striker.y) < striker.radius + 60) {
+                isAiming = true; pullPoint = pos; e.preventDefault();
+            }
+        }
+
+        function processPointerMove(e) {
+            if (!isAiming) return; pullPoint = extractTouchCoords(e); e.preventDefault();
+        }
+
+        function processPointerUp(e) {
+            if (!isAiming) return; isAiming = false;
+            let dx = striker.x - pullPoint.x; let dy = striker.y - pullPoint.y;
+            let targetDist = Math.hypot(dx, dy);
+            let targetForce = Math.min(targetDist * 0.18, 26);
+            let targetAngle = Math.atan2(dy, dx);
+
+            if (targetForce > 1.8) {
+                striker.vx = Math.cos(targetAngle) * targetForce;
+                striker.vy = Math.sin(targetAngle) * targetForce;
+                striker.placed = false; 
+                strikerActiveMoving = true;
+                shotOwnPiecePotted = false;
+                queenPottedThisShot = false; // শট মারার আগে রিসেট
+                framesSinceShotFired = 0; 
+            }
+        }
+
+        canvas.addEventListener('mousedown', processPointerDown, { passive: false });
+        window.addEventListener('mousemove', processPointerMove, { passive: false });
+        window.addEventListener('mouseup', processPointerUp);
+        canvas.addEventListener('touchstart', processPointerDown, { passive: false });
+        canvas.addEventListener('touchmove', processPointerMove, { passive: false });
+        window.addEventListener('touchend', processPointerUp);
+
+        function executePhysicsLoopp() {
+            striker.x += striker.vx; striker.y += striker.vy;
+            striker.vx *= gameFriction; striker.vy *= gameFriction;
+            if (Math.hypot(striker.vx, striker.vy) < 0.2) { striker.vx = 0; striker.vy = 0; }
+
+            pieces.forEach(p => {
+                p.x += p.vx; p.y += p.vy; p.vx *= gameFriction; p.vy *= gameFriction;
+                if (Math.hypot(p.vx, p.vy) < 0.2) { p.vx = 0; p.vy = 0; }
+            });
+
+            // বোর্ড রিবাউন্ড
+            [striker, ...pieces].forEach(obj => {
+                if (obj.x - obj.radius < innerBorder) { obj.x = innerBorder + obj.radius; obj.vx *= -1; }
+                if (obj.x + obj.radius > outerBorder) { obj.x = outerBorder - obj.radius; obj.vx *= -1; }
+                if (obj.y - obj.radius < innerBorder) { obj.y = innerBorder + obj.radius; obj.vy *= -1; }
+                if (obj.y + obj.radius > outerBorder) { obj.y = outerBorder - obj.radius; obj.vy *= -1; }
+            });
+
+            // ইলাস্টিক কোলাইডার ইঞ্জিন
+            let entities = [striker, ...pieces];
+            for (let i = 0; i < entities.length; i++) {
+                for (let j = i + 1; j < entities.length; j++) {
+                    let e1 = entities[i], e2 = entities[j];
+                    let dx = e2.x - e1.x, dy = e2.y - e1.y;
+                    let distance = Math.hypot(dx, dy);
+                    let requiredMin = e1.radius + e2.radius;
+
+                    if (distance < requiredMin) {
+                        let overlap = requiredMin - distance;
+                        let normalX = dx / distance, normalY = dy / distance;
+                        e1.x -= normalX * overlap * 0.5; e1.y -= normalY * overlap * 0.5;
+                        e2.x += normalX * overlap * 0.5; e2.y += normalY * overlap * 0.5;
+
+                        let relativeVx = e1.vx - e2.vx, relativeVy = e1.vy - e2.vy;
+                        let impulseForce = (normalX * relativeVx + normalY * relativeVy);
+                        if (impulseForce > 0) {
+                            e1.vx -= impulseForce * normalX; e1.vy -= impulseForce * normalY;
+                            e2.vx += impulseForce * normalX; e2.vy += impulseForce * normalY;
+                        }
+                    }
+                }
+            }
+
+            // পকেটিং হ্যান্ডলার 
+            for (let index = pieces.length - 1; index >= 0; index--) {
+                let p = pieces[index];
+                for (let pk of pockets) {
+                    if (Math.hypot(p.x - pk.x, p.y - pk.y) < pocketRadius + 4) {
+                        if (p.type === 'white') {
+                            matchScores.p1++; 
+                            document.getElementById('p1Score').innerText = matchScores.p1;
+                            if (activePlayer === 1) shotOwnPiecePotted = true; 
+                        } 
+                        else if (p.type === 'black') {
+                            matchScores.p2++; 
+                            document.getElementById('p2Score').innerText = matchScores.p2;
+                            if (activePlayer === 2) shotOwnPiecePotted = true; 
+                        } 
+                        else if (p.type === 'queen') {
+                            queenPottedThisShot = true; // এখানে ফ্ল্যাগ ট্র্যাপ করা হলো
+                        }
+                        pieces.splice(index, 1);
+                        break;
+                    }
+                }
+            }
+
+            // স্ট্রাইকার ফাউল চেক
+            pockets.forEach(pk => {
+                if (Math.hypot(striker.x - pk.x, striker.y - pk.y) < pocketRadius + 2) {
+                    striker.vx = 0; striker.vy = 0; shotOwnPiecePotted = false;
+                }
+            });
+
+            // 👑 সম্পূর্ণ পুনর্নির্মিত কুইন ও কাভার লকড স্টেট ইঞ্জিন
+            if (strikerActiveMoving) {
+                framesSinceShotFired++;
+
+                // সব মোশন শেষ এবং মিনিমাম ফ্রেম বাফার পাস হয়েছে
+                if (striker.vx === 0 && striker.vy === 0 && pieces.every(p => p.vx === 0 && p.vy === 0) && framesSinceShotFired >= MIN_REQUIRED_FRAMES) {
+                    
+                    // কেস ১: প্লেয়ার রানীর জন্য ট্রাই করছিল না, কিন্তু এই শটে রানী পকেটে পড়েছে
+                    if (queenPottedThisShot && !queenPottedWaitingForCover) {
+                        queenPottedWaitingForCover = true;
+                        queenOwner = activePlayer; // যে প্লেয়ার মেরেছে সে লক হলো
+                        // রানী পড়ার কারণে টার্ন চেঞ্জ হবে না, সে নিজেই কাভার শট খেলবে
+                    }
+                    // কেস ২: প্লেয়ার অলরেডি কাভার শট খেলছিল এবং মোশন শেষ হলো
+                    else if (queenPottedWaitingForCover && activePlayer === queenOwner) {
+                        if (shotOwnPiecePotted) {
+                            // কাভার সফল! রানীর ৩ বোনাস পয়েন্ট যোগ হলো
+                            if (activePlayer === 1) matchScores.p1 += 3;
+                            else matchScores.p2 += 3;
+                            
+                            document.getElementById('p1Score').innerText = matchScores.p1;
+                            document.getElementById('p2Score').innerText = matchScores.p2;
+                            queenPottedWaitingForCover = false; // রানী লক রিলিজ
+                            // কাভার সফল হওয়ায় স্ট্রাইক নিজের কাছেই থাকবে
+                        } else {
+                            // কাভার দিতে ব্যর্থ! রানী আবার সেন্টারে ফেরত আসবে
+                            pieces.push({ x: size / 2, y: size / 2, vx: 0, vy: 0, radius: pieceRadius, type: 'queen', mainColor: '#ff2e63', innerColor: '#ffffff' });
+                            queenPottedWaitingForCover = false; // রানী লক রিলিজ
+                            // কাভার মিস করার কারণে এবার টার্ন চেঞ্জ হয়ে যাবে
+                            activePlayer = (activePlayer === 1) ? 2 : 1;
+                        }
+                    } 
+                    // কেস ৩: সাধারণ নরমাল শট (রানীর ঝামেলা ছাড়া)
+                    else {
+                        if (!shotOwnPiecePotted) {
+                            activePlayer = (activePlayer === 1) ? 2 : 1;
+                        }
+                    }
+                    
+                    // প্রতিটি ভ্যালিড শটের শেষে ফ্ল্যাগ ও কাউন্টার ক্লিনআপ
+                    shotOwnPiecePotted = false; 
+                    queenPottedThisShot = false; 
+                    strikerActiveMoving = false; 
+                    framesSinceShotFired = 0;
+                    applyTurnConfigurations(); 
+                }
+            }
+        }
+
+        function drawPremium3DCarromBoard() {
+            let boardGrad = ctx.createRadialGradient(size/2, size/2, 40, size/2, size/2, size * 0.7);
+            boardGrad.addColorStop(0, '#f2ba7f');   
+            boardGrad.addColorStop(0.6, '#d98c45'); 
+            boardGrad.addColorStop(1, '#914e13');   
+            ctx.fillStyle = boardGrad; ctx.fillRect(0, 0, size, size);
+
+            ctx.strokeStyle = "#2b1201"; ctx.lineWidth = innerBorder * 2; ctx.strokeRect(0, 0, size, size);
+            ctx.strokeStyle = "rgba(255, 215, 0, 0.25)"; ctx.lineWidth = 2; ctx.strokeRect(innerBorder, innerBorder, size - innerBorder*2, size - innerBorder*2);
+
+            pockets.forEach(p => {
+                ctx.fillStyle = "#475569"; ctx.beginPath(); ctx.arc(p.x, p.y, pocketRadius + 1.5, 0, Math.PI * 2); ctx.fill();
+                let holeGrad = ctx.createRadialGradient(p.x, p.y, 5, p.x, p.y, pocketRadius);
+                holeGrad.addColorStop(0, '#000000'); holeGrad.addColorStop(1, '#1e293b');
+                ctx.fillStyle = holeGrad; ctx.beginPath(); ctx.arc(p.x, p.y, pocketRadius, 0, Math.PI * 2); ctx.fill();
+            });
+
+            ctx.strokeStyle = "#5c2a04"; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(size/2, size/2, 54, 0, Math.PI * 2); stroke();
+            ctx.strokeStyle = "#914e13"; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.arc(size/2, size/2, 48, 0, Math.PI * 2); stroke();
+            ctx.fillStyle = "#ff2e63"; ctx.beginPath(); ctx.arc(size/2, size/2, 11, 0, Math.PI * 2); ctx.fill();
+
+            ctx.strokeStyle = "#6e350a"; ctx.lineWidth = 2;
+            [p1BaseY, p2BaseY].forEach(y => {
+                ctx.beginPath(); ctx.moveTo(95, y - 10); ctx.lineTo(size - 95, y - 10); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(95, y + 10); ctx.lineTo(size - 95, y + 10); ctx.stroke();
+                ctx.fillStyle = "#ff2e63";
+                ctx.beginPath(); ctx.arc(95, y, 8, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size - 95, y, 8, 0, Math.PI * 2); ctx.fill();
+            });
+        }
+
+        function drawFlatEntities() {
+            pieces.forEach(p => {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+                ctx.beginPath(); ctx.arc(p.x + 3, p.y + 4, p.radius, 0, Math.PI * 2); ctx.fill();
+            });
+            if (striker.placed || strikerActiveMoving) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+                ctx.beginPath(); ctx.arc(striker.x + 4, striker.y + 6, striker.radius, 0, Math.PI * 2); ctx.fill();
+            }
+
+            pieces.forEach(p => {
+                ctx.save();
+                let coinGrad = ctx.createRadialGradient(p.x - p.radius*0.3, p.y - p.radius*0.3, 2, p.x, p.y, p.radius);
+                coinGrad.addColorStop(0, '#ffffff'); coinGrad.addColorStop(0.2, p.mainColor); coinGrad.addColorStop(1, p.innerColor);
+                ctx.fillStyle = coinGrad; ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.radius * 0.6, 0, Math.PI * 2); ctx.stroke();
+                ctx.restore();
+            });
+
+            if (striker.placed || strikerActiveMoving) {
+                ctx.save();
+                let sColor = (activePlayer === 1) ? "#00ffcc" : ((gameMode === 'ai') ? "#94a3b8" : "#ff4757");
+                let sColorDark = (activePlayer === 1) ? "#006652" : ((gameMode === 'ai') ? "#334155" : "#991b1b");
+                
+                let strGrad = ctx.createRadialGradient(striker.x - strikerRadius*0.3, striker.y - strikerRadius*0.3, 3, striker.x, striker.y, striker.radius);
+                strGrad.addColorStop(0, '#ffffff'); strGrad.addColorStop(0.2, sColor); strGrad.addColorStop(1, sColorDark);
+                ctx.fillStyle = strGrad; ctx.beginPath(); ctx.arc(striker.x, striker.y, striker.radius, 0, Math.PI * 2); ctx.fill();
+                
+                ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(striker.x, striker.y, striker.radius * 0.55, 0, Math.PI * 2); ctx.stroke();
+                ctx.restore();
+            }
+
+            if (isAiming) {
+                ctx.save();
+                let dx = striker.x - pullPoint.x; let dy = striker.y - pullPoint.y;
+                let distanceMag = Math.hypot(dx, dy);
+                
+                if (distanceMag > 2) {
+                    let unitX = dx / distanceMag; let unitY = dy / distanceMag;
+                    let rayLength = 450; let closestPiece = null; let minT = rayLength;
+
+                    for (let i = 0; i < pieces.length; i++) {
+                        let p = pieces[i];
+                        let ocX = p.x - striker.x; let ocY = p.y - striker.y;
+                        let proj = ocX * unitX + ocY * unitY;
+                        if (proj > 0) {
+                            let disc = p.radius + striker.radius;
+                            let distSq = (ocX * ocX + ocY * ocY) - proj * proj;
+                            if (distSq < disc * disc) {
+                                let t = proj - Math.sqrt(disc * disc - distSq);
+                                if (t > 0 && t < minT) { minT = t; closestPiece = p; }
+                            }
+                        }
+                    }
+
+                    let hitX = striker.x + unitX * minT; let hitY = striker.y + unitY * minT;
+                    let activeColor = (activePlayer === 1) ? "#00ffcc" : "#ff4757";
+
+                    ctx.strokeStyle = activeColor; ctx.lineWidth = 2.5; ctx.setLineDash([6, 4]);
+                    ctx.beginPath(); ctx.moveTo(striker.x, striker.y); ctx.lineTo(hitX, hitY); ctx.stroke();
+
+                    if (closestPiece) {
+                        let normalX = (closestPiece.x - hitX) / (closestPiece.radius + striker.radius);
+                        let normalY = (closestPiece.y - hitY) / (closestPiece.radius + striker.radius);
+                        
+                        ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+                        ctx.beginPath(); ctx.moveTo(closestPiece.x, closestPiece.y);
+                        ctx.lineTo(closestPiece.x + normalX * 110, closestPiece.y + normalY * 110);
+                        ctx.stroke();
+
+                        let tangentX = -normalY; let tangentY = normalX;
+                        ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 1.5;
+                        ctx.beginPath(); ctx.moveTo(hitX, hitY);
+                        ctx.lineTo(hitX + tangentX * 70, hitY + tangentY * 70);
+                        ctx.stroke();
+                    }
+
+                    ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 1.2; ctx.setLineDash([]);
+                    ctx.beginPath(); ctx.moveTo(striker.x, striker.y); ctx.lineTo(pullPoint.x, pullPoint.y); ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
+
+        function stroke() { ctx.stroke(); }
+
+        function gameCoreRenderLoop() {
+            executePhysicsLoopp(); drawPremium3DCarromBoard(); drawFlatEntities();
+            requestAnimationFrame(gameCoreRenderLoop);
+        }
+
+        generateFlatPieces(); requestAnimationFrame(gameCoreRenderLoop);
+    </script>
+</body>
+</html>
