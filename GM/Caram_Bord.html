@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Carrom Pro - Queen Cover Perfect Fixed</title>
+    <title>Carrom Pro - Dual Sliders Configured</title>
     <style>
         * {
             margin: 0; padding: 0; box-sizing: border-box;
@@ -16,16 +16,24 @@
             overflow: hidden; display: flex; justify-content: center; align-items: center;
         }
         
-        #modeOverlay {
+        #modeOverlay, #gameOverOverlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(3, 7, 12, 0.95); z-index: 10; display: flex;
             flex-direction: column; justify-content: center; align-items: center; gap: 25px;
             backdrop-filter: blur(10px); transition: all 0.4s ease;
         }
+        #gameOverOverlay { display: none; background: rgba(2, 5, 8, 0.96); }
+        
         .menu-title {
             color: #ffffff; font-size: 28px; font-weight: 900; letter-spacing: 2px;
             text-shadow: 0 0 20px rgba(0, 255, 204, 0.4); text-align: center;
         }
+        .winnerText {
+            font-size: 32px; font-weight: 900; color: #ffd700; text-align: center;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.6); margin-bottom: 10px;
+        }
+        .reasonText { font-size: 15px; color: #94a3b8; text-align: center; margin-bottom: 20px; }
+        
         .menu-btn {
             width: 240px; padding: 16px; font-size: 16px; font-weight: bold;
             color: #ffffff; background: #0f172a; border: 2px solid #00ffcc;
@@ -42,27 +50,32 @@
         #gameApp {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; padding: 12px 10px; z-index: 1; max-width: 450px; opacity: 0; pointer-events: none;
+            align-items: center; padding: 10px; z-index: 1; max-width: 450px; opacity: 0; pointer-events: none;
             transition: opacity 0.5s ease;
         }
         
+        /* প্যানেল এবং স্লাইডার হোল্ডার */
+        .top-deck, .bottom-deck {
+            width: 100%; display: flex; flex-direction: column; gap: 8px;
+        }
+
         .player-panel-top {
             width: 100%; background: linear-gradient(135deg, #0f151d, #1e293b); border: 2px solid #ff4757;
-            border-radius: 16px; padding: 10px 16px; display: flex;
+            border-radius: 16px; padding: 8px 16px; display: flex;
             justify-content: space-between; align-items: center; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
         .player-panel-bottom {
             width: 100%; background: linear-gradient(135deg, #0f151d, #1e293b); border: 2px solid #00ffcc;
-            border-radius: 16px; padding: 10px 16px; display: flex;
+            border-radius: 16px; padding: 8px 16px; display: flex;
             justify-content: space-between; align-items: center; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
         .user-profile { display: flex; align-items: center; gap: 12px; }
         .avatar-head {
-            width: 42px; height: 42px; background: #1e293b; border-radius: 50%;
+            width: 38px; height: 38px; background: #1e293b; border-radius: 50%;
             display: flex; justify-content: center; align-items: center; border: 2px solid #7f8c8d; position: relative;
         }
-        .avatar-head::before { content: ''; position: absolute; top: 8px; width: 14px; height: 14px; background: #94a3b8; border-radius: 50%; }
-        .avatar-head::after { content: ''; position: absolute; bottom: 4px; width: 24px; height: 10px; background: #94a3b8; border-radius: 10px 10px 0 0; }
+        .avatar-head::before { content: ''; position: absolute; top: 6px; width: 12px; height: 12px; background: #94a3b8; border-radius: 50%; }
+        .avatar-head::after { content: ''; position: absolute; bottom: 4px; width: 20px; height: 8px; background: #94a3b8; border-radius: 8px 8px 0 0; }
         .coin-indicator { width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-left: 5px; vertical-align: middle; box-shadow: inset 0 2px 4px rgba(255,255,255,0.3); }
         .white-ind { background: #ffffff; border: 1px solid #ccc; }
         .black-ind { background: #1e252b; border: 1px solid #000; }
@@ -74,13 +87,13 @@
         #turnStatusBadge {
             font-size: 11px; font-weight: bold; padding: 6px 16px; border-radius: 20px;
             text-align: center; letter-spacing: 1px; background: rgba(0, 255, 204, 0.1);
-            border: 1px solid #00ffcc; color: #00ffcc; box-shadow: 0 0 10px rgba(0,255,204,0.1);
+            border: 1px solid #00ffcc; color: #00ffcc; box-shadow: 0 0 10px rgba(0,254,204,0.1);
         }
-        .score-display { font-size: 26px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .score-display { font-size: 24px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         
         .board-wrapper {
             width: 100%; aspect-ratio: 1 / 1; background: #120600;
-            border-radius: 20px; padding: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 4px 10px rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 4px 10px rgba(255,255,255,0.1);
             position: relative;
         }
         .canvas-holder { 
@@ -89,19 +102,28 @@
         }
         canvas { display: block; width: 100%; height: 100%; }
         
-        .action-deck {
-            width: 100%; background: #090d16; padding: 12px; border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; gap: 8px;
+        /* ডাইনামিক আলাদা স্লাইডার বক্স */
+        .slider-box-wrap { 
+            width: 100%; background: #090d16; padding: 8px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center;
         }
-        .slider-box { width: 100%; display: flex; flex-direction: column; align-items: center; }
-        .slider-title { font-size: 11px; color: #94a3b8; font-weight: bold; margin-bottom: 4px; }
-        input[type=range] { width: 92%; -webkit-appearance: none; background: transparent; height: 30px; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #020406; border-radius: 3px; }
-        input[type=range]::-webkit-slider-thumb {
-            height: 26px; width: 26px; border-radius: 50%; background: #ffffff;
-            border: 4px solid #00ffcc; cursor: pointer; -webkit-appearance: none; margin-top: -10px; box-shadow: 0 0 10px #00ffcc;
+        .slider-title { font-size: 10px; color: #94a3b8; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; }
+        input[type=range] { width: 94%; -webkit-appearance: none; background: transparent; height: 26px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #020406; border-radius: 2px; }
+        
+        /* Player 1 স্লাইডার থাম্ব কালার (সবুজ) */
+        .p1-slider::-webkit-slider-thumb {
+            height: 22px; width: 22px; border-radius: 50%; background: #ffffff;
+            border: 4px solid #00ffcc; cursor: pointer; -webkit-appearance: none; margin-top: -9px; box-shadow: 0 0 8px #00ffcc;
         }
-        .reset-btn { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: #e2e8f0; padding: 8px 24px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        /* Player 2 স্লাইডার থাম্ব কালার (লাল) */
+        .p2-slider::-webkit-slider-thumb {
+            height: 22px; width: 22px; border-radius: 50%; background: #ffffff;
+            border: 4px solid #ff4757; cursor: pointer; -webkit-appearance: none; margin-top: -9px; box-shadow: 0 0 8px #ff4757;
+        }
+        
+        .utility-row { width: 100%; display: flex; justify-content: center; margin: 2px 0; }
+        .reset-btn { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: #e2e8f0; padding: 6px 20px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; transition: 0.2s; }
         .reset-btn:hover { background: #ff4757; border-color: #ff4757; color: #fff; }
     </style>
 </head>
@@ -113,16 +135,29 @@
         <button class="menu-btn vs-player" onclick="selectGameMode('pvp')">👥 Pass & Play</button>
     </div>
 
+    <div id="gameOverOverlay">
+        <div class="winnerText" id="winHeader">PLAYER 1 WINS!</div>
+        <div class="reasonText" id="winReason">All white pieces are cleared.</div>
+        <button class="menu-btn" onclick="resetFromGameOver()">PLAY AGAIN</button>
+        <button class="menu-btn vs-player" onclick="quitToMainMenuFromOver()">MAIN MENU</button>
+    </div>
+
     <div id="gameApp">
-        <div class="player-panel-top">
-            <div class="user-profile">
-                <div class="avatar-head" id="p2Avatar" style="border-color: #ff4757;"></div>
-                <div class="meta-info">
-                    <span class="player-name" id="p2Name">PLAYER 2</span>
-                    <span class="assigned-piece">কালো গুটি <span class="coin-indicator black-ind"></span></span>
+        <div class="top-deck">
+            <div class="player-panel-top">
+                <div class="user-profile">
+                    <div class="avatar-head" id="p2Avatar" style="border-color: #ff4757;"></div>
+                    <div class="meta-info">
+                        <span class="player-name" id="p2Name">PLAYER 2</span>
+                        <span class="assigned-piece">কালো গুটি <span class="coin-indicator black-ind"></span></span>
+                    </div>
                 </div>
+                <div id="p2Score" class="score-display" style="color: #ff4757;">0</div>
             </div>
-            <div id="p2Score" class="score-display" style="color: #ff4757;">0</div>
+            <div class="slider-box-wrap" id="p2SliderContainer">
+                <div class="slider-title" id="p2Guide" style="color: #ff4757;">PLAYER 2: পজিশন সেট করুন</div>
+                <input type="range" class="p2-slider" id="p2Slider" min="95" max="505" value="300" oninput="liveSliderMove(this.value, 2)">
+            </div>
         </div>
 
         <div id="turnStatusBadge">PLAYER 1 TURN</div>
@@ -133,32 +168,34 @@
             </div>
         </div>
 
-        <div class="action-deck">
-            <div class="slider-box">
-                <div class="slider-title" id="controlGuide">PLAYER 1: স্ট্রাইকার পজিশন সেট করুন</div>
-                <input type="range" id="positionSlider" min="95" max="505" value="300" oninput="liveSliderMove(this.value)">
-            </div>
+        <div class="utility-row">
             <button class="reset-btn" onclick="quitToMainMenu()">MAIN MENU</button>
         </div>
 
-        <div class="player-panel-bottom">
-            <div class="user-profile">
-                <div class="avatar-head" style="border-color: #00ffcc;"></div>
-                <div class="meta-info">
-                    <span class="player-name">PLAYER 1</span>
-                    <span class="assigned-piece">সাদা গুটি <span class="coin-indicator white-ind"></span></span>
-                </div>
+        <div class="bottom-deck">
+            <div class="slider-box-wrap" id="p1SliderContainer">
+                <div class="slider-title" id="p1Guide" style="color: #00ffcc;">PLAYER 1: পজিশন সেট করুন</div>
+                <input type="range" class="p1-slider" id="p1Slider" min="95" max="505" value="300" oninput="liveSliderMove(this.value, 1)">
             </div>
-            <div id="p1Score" class="score-display" style="color: #00ffcc;">0</div>
+            <div class="player-panel-bottom">
+                <div class="user-profile">
+                    <div class="avatar-head" style="border-color: #00ffcc;"></div>
+                    <div class="meta-info">
+                        <span class="player-name">PLAYER 1</span>
+                        <span class="assigned-piece">সাদা গুটি <span class="coin-indicator white-ind"></span></span>
+                    </div>
+                </div>
+                <div id="p1Score" class="score-display" style="color: #00ffcc;">0</div>
+            </div>
         </div>
     </div>
 
     <script>
         const canvas = document.getElementById('mainCarromCanvas');
         const ctx = canvas.getContext('2d');
-        const slider = document.getElementById('positionSlider');
+        const p1Slider = document.getElementById('p1Slider');
+        const p2Slider = document.getElementById('p2Slider');
         const turnStatusBadge = document.getElementById('turnStatusBadge');
-        const controlGuide = document.getElementById('controlGuide');
 
         const size = 600;
         canvas.width = size; canvas.height = size;
@@ -168,6 +205,7 @@
         let matchScores = { p1: 0, p2: 0 };
         let strikerActiveMoving = false; 
         let aiThinking = false;
+        let isMatchOver = false;
 
         const gameFriction = 0.982; 
         const pieceRadius = 14;     
@@ -188,14 +226,13 @@
         let isAiming = false;
         let pullPoint = { x: 0, y: 0 };
         
-        // 👑 রানী এবং কাভার ট্র্যাকিং স্টেট ইঞ্জিন (সম্পূর্ণ নতুন)
         let shotOwnPiecePotted = false;
         let queenPottedThisShot = false;
         let queenPottedWaitingForCover = false;
         let queenOwner = 0; 
 
         let framesSinceShotFired = 0;
-        const MIN_REQUIRED_FRAMES = 30; // ফ্রেম বাফার আরও বাড়িয়ে ৩০ করা হলো যেন সব যাচাই করার সময় পায়
+        const MIN_REQUIRED_FRAMES = 30;
 
         function selectGameMode(mode) {
             gameMode = mode;
@@ -205,11 +242,13 @@
             document.getElementById('gameApp').style.pointerEvents = 'all';
             
             if(mode === 'ai') {
-                document.getElementById('p2Name').innerText = "AI BOT (ROBOT)";
+                document.getElementById('p2Name').innerText = "AI BOT";
                 document.getElementById('p2Avatar').style.borderColor = "#94a3b8";
+                document.getElementById('p2SliderContainer').style.display = "none"; // AI মোডে উপরের স্লাইডার লাগবে না
             } else {
                 document.getElementById('p2Name').innerText = "PLAYER 2";
                 document.getElementById('p2Avatar').style.borderColor = "#ff4757";
+                document.getElementById('p2SliderContainer').style.display = "flex";
             }
             triggerMatchReset();
         }
@@ -219,6 +258,17 @@
             document.getElementById('modeOverlay').style.pointerEvents = 'all';
             document.getElementById('gameApp').style.opacity = '0';
             document.getElementById('gameApp').style.pointerEvents = 'none';
+            document.getElementById('gameOverOverlay').style.display = 'none';
+        }
+
+        function resetFromGameOver() {
+            document.getElementById('gameOverOverlay').style.display = 'none';
+            triggerMatchReset();
+        }
+
+        function quitToMainMenuFromOver() {
+            document.getElementById('gameOverOverlay').style.display = 'none';
+            quitToMainMenu();
         }
 
         function triggerMatchReset() {
@@ -234,6 +284,7 @@
             queenOwner = 0;
             aiThinking = false;
             framesSinceShotFired = 0;
+            isMatchOver = false;
             
             generateFlatPieces();
             applyTurnConfigurations();
@@ -259,39 +310,50 @@
             }
         }
 
+        // 🔄 টার্ন চেঞ্জ হলে স্লাইডার একটিভ/ডিঅ্যাক্টিভ করা
         function applyTurnConfigurations() {
+            if(isMatchOver) return;
             isAiming = false; 
             striker.vx = 0; striker.vy = 0;
+            
             let targetY = (activePlayer === 1) ? p1BaseY : p2BaseY;
             
             let safeX = 300;
             for (let xCheck = 300; xCheck <= 505; xCheck += 5) {
                 if (!isPieceOverlappingBaseline(xCheck, targetY)) { safeX = xCheck; break; }
             }
-            striker.x = safeX; striker.y = targetY; striker.placed = true; slider.value = safeX;
+            striker.x = safeX; striker.y = targetY; striker.placed = true; 
+            
+            // স্লাইডার ভ্যালু সিঙ্ক করা
+            p1Slider.value = safeX;
+            p2Slider.value = safeX;
 
             if (activePlayer === 1) {
+                p1Slider.disabled = false;
+                p2Slider.disabled = true; // প্লেয়ার ২ এর স্লাইডার লক থাকবে
+                
                 turnStatusBadge.innerText = queenPottedWaitingForCover ? "PLAYER 1: কাভার শট দিন! 👑" : "PLAYER 1 TURN"; 
                 turnStatusBadge.style.color = "#00ffcc";
                 turnStatusBadge.style.borderColor = "#00ffcc"; turnStatusBadge.style.background = "rgba(0, 255, 204, 0.08)";
-                controlGuide.innerText = "PLAYER 1: স্ট্রাইকার পজিশন সেট করুন"; controlGuide.style.color = "#00ffcc";
             } else {
+                p1Slider.disabled = true; // প্লেয়ার ১ এর স্লাইডার লক থাকবে
+                
                 let p2Color = (gameMode === 'ai') ? "#94a3b8" : "#ff4757";
                 turnStatusBadge.innerText = (gameMode === 'ai') ? (queenPottedWaitingForCover ? "AI BOT: কাভার শট দিচ্ছে... 👑" : "AI BOT THINKING...") : (queenPottedWaitingForCover ? "PLAYER 2: কাভার শট দিন! 👑" : "PLAYER 2 TURN"); 
                 turnStatusBadge.style.color = p2Color;
                 turnStatusBadge.style.borderColor = p2Color; turnStatusBadge.style.background = "rgba(255, 71, 87, 0.08)";
-                controlGuide.innerText = (gameMode === 'ai') ? "কম্পিউটার চাল হিসাব করছে..." : "PLAYER 2: স্ট্রাইকার পজিশন সেট করুন"; 
-                controlGuide.style.color = p2Color;
-
-                if(gameMode === 'ai' && !aiThinking) {
-                    aiThinking = true;
-                    setTimeout(executeAISmartTurn, 1000);
+                
+                if(gameMode === 'ai') {
+                    p2Slider.disabled = true;
+                    if(!aiThinking) { aiThinking = true; setTimeout(executeAISmartTurn, 800); }
+                } else {
+                    p2Slider.disabled = false; // পাস অ্যান্ড প্লে মোডে ২য় স্লাইডার আনলক হবে
                 }
             }
         }
 
         function executeAISmartTurn() {
-            if (activePlayer !== 2 || strikerActiveMoving) { aiThinking = false; return; }
+            if (activePlayer !== 2 || strikerActiveMoving || isMatchOver) { aiThinking = false; return; }
 
             let targetPieces = pieces.filter(p => p.type === 'black');
             if(!queenPottedWaitingForCover && pieces.some(p => p.type === 'queen')) {
@@ -309,26 +371,24 @@
 
                 let idealX = Math.max(120, Math.min(480, bestTarget.x + (Math.random() * 60 - 30)));
                 striker.x = idealX;
-                slider.value = idealX;
+                p2Slider.value = idealX;
 
                 setTimeout(() => {
-                    if (activePlayer !== 2) { aiThinking = false; return; }
+                    if (activePlayer !== 2 || isMatchOver) { aiThinking = false; return; }
                     let angle = Math.atan2(bestTarget.y - striker.y, bestTarget.x - striker.x);
-                    let force = 16 + Math.random() * 6; 
+                    let force = 17 + Math.random() * 5; 
 
                     striker.vx = Math.cos(angle) * force;
                     striker.vy = Math.sin(angle) * force;
                     striker.placed = false;
                     strikerActiveMoving = true;
                     shotOwnPiecePotted = false;
-                    queenPottedThisShot = false; // শট মারার আগে রিসেট
+                    queenPottedThisShot = false;
                     framesSinceShotFired = 0; 
                     aiThinking = false;
-                }, 600);
+                }, 400);
             } else {
-                aiThinking = false;
-                activePlayer = 1;
-                applyTurnConfigurations();
+                aiThinking = false; activePlayer = 1; applyTurnConfigurations();
             }
         }
 
@@ -339,8 +399,11 @@
             return false;
         }
 
-        function liveSliderMove(val) {
-            if (!striker.placed || strikerActiveMoving || (gameMode === 'ai' && activePlayer === 2)) return;
+        // 🎛️ কোন স্লাইডার নড়ছে তা ট্র্যাক করে পজিশন চেঞ্জ করা
+        function liveSliderMove(val, sliderId) {
+            if (!striker.placed || strikerActiveMoving || isMatchOver) return;
+            if (sliderId !== activePlayer) return; // যার চাল শুধু তার স্লাইডারই কাজ করবে
+
             let targetX = parseInt(val);
             let targetY = (activePlayer === 1) ? p1BaseY : p2BaseY;
             if (!isPieceOverlappingBaseline(targetX, targetY)) striker.x = targetX;
@@ -354,33 +417,32 @@
         }
 
         function processPointerDown(e) {
-            if (!striker.placed || strikerActiveMoving) return;
+            if (!striker.placed || strikerActiveMoving || isMatchOver) return;
             if (gameMode === 'ai' && activePlayer === 2) return; 
+            
             const pos = extractTouchCoords(e);
-            if (Math.hypot(pos.x - striker.x, pos.y - striker.y) < striker.radius + 60) {
+            if (Math.hypot(pos.x - striker.x, pos.y - striker.y) < striker.radius + 80) {
                 isAiming = true; pullPoint = pos; e.preventDefault();
             }
         }
 
         function processPointerMove(e) {
-            if (!isAiming) return; pullPoint = extractTouchCoords(e); e.preventDefault();
+            if (!isAiming || isMatchOver) return; pullPoint = extractTouchCoords(e); e.preventDefault();
         }
 
         function processPointerUp(e) {
-            if (!isAiming) return; isAiming = false;
+            if (!isAiming || isMatchOver) return; isAiming = false;
+            
             let dx = striker.x - pullPoint.x; let dy = striker.y - pullPoint.y;
             let targetDist = Math.hypot(dx, dy);
             let targetForce = Math.min(targetDist * 0.18, 26);
             let targetAngle = Math.atan2(dy, dx);
 
-            if (targetForce > 1.8) {
+            if (targetForce > 1.0) {
                 striker.vx = Math.cos(targetAngle) * targetForce;
                 striker.vy = Math.sin(targetAngle) * targetForce;
-                striker.placed = false; 
-                strikerActiveMoving = true;
-                shotOwnPiecePotted = false;
-                queenPottedThisShot = false; // শট মারার আগে রিসেট
-                framesSinceShotFired = 0; 
+                striker.placed = false; strikerActiveMoving = true;
+                shotOwnPiecePotted = false; queenPottedThisShot = false; framesSinceShotFired = 0; 
             }
         }
 
@@ -391,7 +453,30 @@
         canvas.addEventListener('touchmove', processPointerMove, { passive: false });
         window.addEventListener('touchend', processPointerUp);
 
+        function evaluateMatchResult() {
+            isMatchOver = true; striker.vx = 0; striker.vy = 0;
+            pieces.forEach(p => { p.vx = 0; p.vy = 0; });
+            
+            let winHeader = document.getElementById('winHeader');
+            let winReason = document.getElementById('winReason');
+            
+            if (matchScores.p1 > matchScores.p2) {
+                winHeader.innerText = "🏆 PLAYER 1 WINS!"; winHeader.style.color = "#00ffcc";
+                winReason.innerText = `Score: P1 (${matchScores.p1}) vs P2 (${matchScores.p2})`;
+            } else if (matchScores.p2 > matchScores.p1) {
+                winHeader.innerText = (gameMode === 'ai') ? "🤖 COMPUTER WINS!" : "🏆 PLAYER 2 WINS!";
+                winHeader.style.color = "#ff4757";
+                winReason.innerText = `Score: P2 (${matchScores.p2}) vs P1 (${matchScores.p1})`;
+            } else {
+                winHeader.innerText = "🤝 MATCH DRAW!"; winHeader.style.color = "#ffd700";
+                winReason.innerText = `Both points equal (${matchScores.p1} - ${matchScores.p2}).`;
+            }
+            document.getElementById('gameOverOverlay').style.display = 'flex';
+        }
+
         function executePhysicsLoopp() {
+            if (isMatchOver) return;
+
             striker.x += striker.vx; striker.y += striker.vy;
             striker.vx *= gameFriction; striker.vy *= gameFriction;
             if (Math.hypot(striker.vx, striker.vy) < 0.2) { striker.vx = 0; striker.vy = 0; }
@@ -401,7 +486,6 @@
                 if (Math.hypot(p.vx, p.vy) < 0.2) { p.vx = 0; p.vy = 0; }
             });
 
-            // বোর্ড রিবাউন্ড
             [striker, ...pieces].forEach(obj => {
                 if (obj.x - obj.radius < innerBorder) { obj.x = innerBorder + obj.radius; obj.vx *= -1; }
                 if (obj.x + obj.radius > outerBorder) { obj.x = outerBorder - obj.radius; obj.vx *= -1; }
@@ -409,7 +493,6 @@
                 if (obj.y + obj.radius > outerBorder) { obj.y = outerBorder - obj.radius; obj.vy *= -1; }
             });
 
-            // ইলাস্টিক কোলাইডার ইঞ্জিন
             let entities = [striker, ...pieces];
             for (let i = 0; i < entities.length; i++) {
                 for (let j = i + 1; j < entities.length; j++) {
@@ -434,81 +517,63 @@
                 }
             }
 
-            // পকেটিং হ্যান্ডলার 
             for (let index = pieces.length - 1; index >= 0; index--) {
                 let p = pieces[index];
                 for (let pk of pockets) {
                     if (Math.hypot(p.x - pk.x, p.y - pk.y) < pocketRadius + 4) {
                         if (p.type === 'white') {
-                            matchScores.p1++; 
-                            document.getElementById('p1Score').innerText = matchScores.p1;
+                            matchScores.p1++; document.getElementById('p1Score').innerText = matchScores.p1;
                             if (activePlayer === 1) shotOwnPiecePotted = true; 
                         } 
                         else if (p.type === 'black') {
-                            matchScores.p2++; 
-                            document.getElementById('p2Score').innerText = matchScores.p2;
+                            matchScores.p2++; document.getElementById('p2Score').innerText = matchScores.p2;
                             if (activePlayer === 2) shotOwnPiecePotted = true; 
                         } 
-                        else if (p.type === 'queen') {
-                            queenPottedThisShot = true; // এখানে ফ্ল্যাগ ট্র্যাপ করা হলো
-                        }
-                        pieces.splice(index, 1);
-                        break;
+                        else if (p.type === 'queen') { queenPottedThisShot = true; }
+                        pieces.splice(index, 1); break;
                     }
                 }
             }
 
-            // স্ট্রাইকার ফাউল চেক
+            let remainingWhite = pieces.filter(p => p.type === 'white').length;
+            let remainingBlack = pieces.filter(p => p.type === 'black').length;
+            if (remainingWhite === 0 || remainingBlack === 0) {
+                if (striker.vx === 0 && striker.vy === 0 && pieces.every(p => p.vx === 0 && p.vy === 0)) {
+                    evaluateMatchResult(); return;
+                }
+            }
+
             pockets.forEach(pk => {
                 if (Math.hypot(striker.x - pk.x, striker.y - pk.y) < pocketRadius + 2) {
                     striker.vx = 0; striker.vy = 0; shotOwnPiecePotted = false;
                 }
             });
 
-            // 👑 সম্পূর্ণ পুনর্নির্মিত কুইন ও কাভার লকড স্টেট ইঞ্জিন
             if (strikerActiveMoving) {
                 framesSinceShotFired++;
 
-                // সব মোশন শেষ এবং মিনিমাম ফ্রেম বাফার পাস হয়েছে
                 if (striker.vx === 0 && striker.vy === 0 && pieces.every(p => p.vx === 0 && p.vy === 0) && framesSinceShotFired >= MIN_REQUIRED_FRAMES) {
                     
-                    // কেস ১: প্লেয়ার রানীর জন্য ট্রাই করছিল না, কিন্তু এই শটে রানী পকেটে পড়েছে
                     if (queenPottedThisShot && !queenPottedWaitingForCover) {
-                        queenPottedWaitingForCover = true;
-                        queenOwner = activePlayer; // যে প্লেয়ার মেরেছে সে লক হলো
-                        // রানী পড়ার কারণে টার্ন চেঞ্জ হবে না, সে নিজেই কাভার শট খেলবে
+                        queenPottedWaitingForCover = true; queenOwner = activePlayer;
                     }
-                    // কেস ২: প্লেয়ার অলরেডি কাভার শট খেলছিল এবং মোশন শেষ হলো
                     else if (queenPottedWaitingForCover && activePlayer === queenOwner) {
                         if (shotOwnPiecePotted) {
-                            // কাভার সফল! রানীর ৩ বোনাস পয়েন্ট যোগ হলো
-                            if (activePlayer === 1) matchScores.p1 += 3;
-                            else matchScores.p2 += 3;
-                            
+                            if (activePlayer === 1) matchScores.p1 += 3; else matchScores.p2 += 3;
                             document.getElementById('p1Score').innerText = matchScores.p1;
                             document.getElementById('p2Score').innerText = matchScores.p2;
-                            queenPottedWaitingForCover = false; // রানী লক রিলিজ
-                            // কাভার সফল হওয়ায় স্ট্রাইক নিজের কাছেই থাকবে
+                            queenPottedWaitingForCover = false;
                         } else {
-                            // কাভার দিতে ব্যর্থ! রানী আবার সেন্টারে ফেরত আসবে
                             pieces.push({ x: size / 2, y: size / 2, vx: 0, vy: 0, radius: pieceRadius, type: 'queen', mainColor: '#ff2e63', innerColor: '#ffffff' });
-                            queenPottedWaitingForCover = false; // রানী লক রিলিজ
-                            // কাভার মিস করার কারণে এবার টার্ন চেঞ্জ হয়ে যাবে
+                            queenPottedWaitingForCover = false;
                             activePlayer = (activePlayer === 1) ? 2 : 1;
                         }
                     } 
-                    // কেস ৩: সাধারণ নরমাল শট (রানীর ঝামেলা ছাড়া)
                     else {
-                        if (!shotOwnPiecePotted) {
-                            activePlayer = (activePlayer === 1) ? 2 : 1;
-                        }
+                        if (!shotOwnPiecePotted) { activePlayer = (activePlayer === 1) ? 2 : 1; }
                     }
                     
-                    // প্রতিটি ভ্যালিড শটের শেষে ফ্ল্যাগ ও কাউন্টার ক্লিনআপ
-                    shotOwnPiecePotted = false; 
-                    queenPottedThisShot = false; 
-                    strikerActiveMoving = false; 
-                    framesSinceShotFired = 0;
+                    shotOwnPiecePotted = false; queenPottedThisShot = false; strikerActiveMoving = false; framesSinceShotFired = 0;
                     applyTurnConfigurations(); 
                 }
             }
@@ -516,45 +581,72 @@
 
         function drawPremium3DCarromBoard() {
             let boardGrad = ctx.createRadialGradient(size/2, size/2, 40, size/2, size/2, size * 0.7);
-            boardGrad.addColorStop(0, '#f2ba7f');   
-            boardGrad.addColorStop(0.6, '#d98c45'); 
-            boardGrad.addColorStop(1, '#914e13');   
+            boardGrad.addColorStop(0, '#f5cba7'); boardGrad.addColorStop(0.7, '#e59866'); boardGrad.addColorStop(1, '#af601a');   
             ctx.fillStyle = boardGrad; ctx.fillRect(0, 0, size, size);
 
-            ctx.strokeStyle = "#2b1201"; ctx.lineWidth = innerBorder * 2; ctx.strokeRect(0, 0, size, size);
-            ctx.strokeStyle = "rgba(255, 215, 0, 0.25)"; ctx.lineWidth = 2; ctx.strokeRect(innerBorder, innerBorder, size - innerBorder*2, size - innerBorder*2);
+            ctx.strokeStyle = "#1b0c02"; ctx.lineWidth = innerBorder * 2; ctx.strokeRect(0, 0, size, size);
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.4)"; ctx.lineWidth = 1.5; ctx.strokeRect(innerBorder, innerBorder, size - innerBorder*2, size - innerBorder*2);
 
             pockets.forEach(p => {
-                ctx.fillStyle = "#475569"; ctx.beginPath(); ctx.arc(p.x, p.y, pocketRadius + 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = "#334155"; ctx.beginPath(); ctx.arc(p.x, p.y, pocketRadius + 1.5, 0, Math.PI * 2); ctx.fill();
                 let holeGrad = ctx.createRadialGradient(p.x, p.y, 5, p.x, p.y, pocketRadius);
-                holeGrad.addColorStop(0, '#000000'); holeGrad.addColorStop(1, '#1e293b');
+                holeGrad.addColorStop(0, '#05050a'); holeGrad.addColorStop(1, '#1e293b');
                 ctx.fillStyle = holeGrad; ctx.beginPath(); ctx.arc(p.x, p.y, pocketRadius, 0, Math.PI * 2); ctx.fill();
             });
 
-            ctx.strokeStyle = "#5c2a04"; ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.arc(size/2, size/2, 54, 0, Math.PI * 2); stroke();
-            ctx.strokeStyle = "#914e13"; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.arc(size/2, size/2, 48, 0, Math.PI * 2); stroke();
+            ctx.strokeStyle = "#a04000"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(size/2, size/2, 54, 0, Math.PI * 2); stroke();
+            ctx.strokeStyle = "#78281f"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(size/2, size/2, 48, 0, Math.PI * 2); stroke();
+            
+            ctx.save(); ctx.translate(size/2, size/2); ctx.strokeStyle = "#78281f"; ctx.lineWidth = 1.5;
+            for(let i=0; i<8; i++) {
+                ctx.rotate(Math.PI / 4); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -46); ctx.stroke();
+                ctx.fillStyle = (i % 2 === 0) ? "#b03a2e" : "#1c2833";
+                ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, -46); ctx.lineTo(10, -20); ctx.closePath(); ctx.fill();
+            }
+            ctx.restore();
+            
             ctx.fillStyle = "#ff2e63"; ctx.beginPath(); ctx.arc(size/2, size/2, 11, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = "#562401"; ctx.lineWidth = 1.5;
+            
+            const baseConfigs = [
+                {x1: 95, y1: p1BaseY, x2: size-95, y2: p1BaseY, isHoriz: true},
+                {x1: 95, y1: p2BaseY, x2: size-95, y2: p2BaseY, isHoriz: true},
+                {x1: 110, y1: 95, x2: 110, y2: size-95, isHoriz: false},
+                {x1: size-110, y1: 95, x2: size-110, y2: size-95, isHoriz: false}
+            ];
 
-            ctx.strokeStyle = "#6e350a"; ctx.lineWidth = 2;
-            [p1BaseY, p2BaseY].forEach(y => {
-                ctx.beginPath(); ctx.moveTo(95, y - 10); ctx.lineTo(size - 95, y - 10); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(95, y + 10); ctx.lineTo(size - 95, y + 10); ctx.stroke();
-                ctx.fillStyle = "#ff2e63";
-                ctx.beginPath(); ctx.arc(95, y, 8, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(size - 95, y, 8, 0, Math.PI * 2); ctx.fill();
+            baseConfigs.forEach(b => {
+                let offset = 10;
+                if(b.isHoriz) {
+                    ctx.beginPath(); ctx.moveTo(b.x1, b.y1 - offset); ctx.lineTo(b.x2, b.y2 - offset); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(b.x1, b.y1 + offset); ctx.lineTo(b.x2, b.y2 + offset); ctx.stroke();
+                    ctx.fillStyle = "#cb4335"; ctx.beginPath(); ctx.arc(b.x1, b.y1, 9, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(b.x2, b.y2, 9, 0, Math.PI * 2); ctx.fill();
+                } else {
+                    ctx.beginPath(); ctx.moveTo(b.x1 - offset, b.y1); ctx.lineTo(b.x2 - offset, b.y2); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(b.x1 + offset, b.y1); ctx.lineTo(b.x2 + offset, b.y2); stroke();
+                    ctx.fillStyle = "#cb4335"; ctx.beginPath(); ctx.arc(b.x1, b.y1, 9, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(b.x2, b.y2, 9, 0, Math.PI * 2); ctx.fill();
+                }
+            });
+
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.6)"; ctx.lineWidth = 1.2;
+            const corners = [
+                {xs: innerBorder+15, ys: innerBorder+15, angle: Math.PI/4},
+                {xs: size-innerBorder-15, ys: innerBorder+15, angle: 3*Math.PI/4},
+                {xs: innerBorder+15, ys: size-innerBorder-15, angle: -Math.PI/4},
+                {xs: size-innerBorder-15, ys: size-innerBorder-15, angle: -3*Math.PI/4}
+            ];
+            corners.forEach(c => {
+                ctx.save(); ctx.translate(c.xs, c.ys); ctx.rotate(c.angle); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(120, 0); ctx.stroke();
+                ctx.beginPath(); ctx.arc(70, 0, 14, Math.PI*0.5, Math.PI*1.5); ctx.stroke(); ctx.restore();
             });
         }
 
         function drawFlatEntities() {
             pieces.forEach(p => {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
-                ctx.beginPath(); ctx.arc(p.x + 3, p.y + 4, p.radius, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = "rgba(0, 0, 0, 0.4)"; ctx.beginPath(); ctx.arc(p.x + 3, p.y + 4, p.radius, 0, Math.PI * 2); ctx.fill();
             });
-            if (striker.placed || strikerActiveMoving) {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
-                ctx.beginPath(); ctx.arc(striker.x + 4, striker.y + 6, striker.radius, 0, Math.PI * 2); ctx.fill();
+            if ((striker.placed || strikerActiveMoving) && !isMatchOver) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.45)"; ctx.beginPath(); ctx.arc(striker.x + 4, striker.y + 6, striker.radius, 0, Math.PI * 2); ctx.fill();
             }
 
             pieces.forEach(p => {
@@ -562,12 +654,10 @@
                 let coinGrad = ctx.createRadialGradient(p.x - p.radius*0.3, p.y - p.radius*0.3, 2, p.x, p.y, p.radius);
                 coinGrad.addColorStop(0, '#ffffff'); coinGrad.addColorStop(0.2, p.mainColor); coinGrad.addColorStop(1, p.innerColor);
                 ctx.fillStyle = coinGrad; ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.radius * 0.6, 0, Math.PI * 2); ctx.stroke();
                 ctx.restore();
             });
 
-            if (striker.placed || strikerActiveMoving) {
+            if ((striker.placed || strikerActiveMoving) && !isMatchOver) {
                 ctx.save();
                 let sColor = (activePlayer === 1) ? "#00ffcc" : ((gameMode === 'ai') ? "#94a3b8" : "#ff4757");
                 let sColorDark = (activePlayer === 1) ? "#006652" : ((gameMode === 'ai') ? "#334155" : "#991b1b");
@@ -581,7 +671,7 @@
                 ctx.restore();
             }
 
-            if (isAiming) {
+            if (isAiming && !isMatchOver) {
                 ctx.save();
                 let dx = striker.x - pullPoint.x; let dy = striker.y - pullPoint.y;
                 let distanceMag = Math.hypot(dx, dy);
@@ -613,17 +703,9 @@
                     if (closestPiece) {
                         let normalX = (closestPiece.x - hitX) / (closestPiece.radius + striker.radius);
                         let normalY = (closestPiece.y - hitY) / (closestPiece.radius + striker.radius);
-                        
                         ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
                         ctx.beginPath(); ctx.moveTo(closestPiece.x, closestPiece.y);
-                        ctx.lineTo(closestPiece.x + normalX * 110, closestPiece.y + normalY * 110);
-                        ctx.stroke();
-
-                        let tangentX = -normalY; let tangentY = normalX;
-                        ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 1.5;
-                        ctx.beginPath(); ctx.moveTo(hitX, hitY);
-                        ctx.lineTo(hitX + tangentX * 70, hitY + tangentY * 70);
-                        ctx.stroke();
+                        ctx.lineTo(closestPiece.x + normalX * 110, closestPiece.y + normalY * 110); ctx.stroke();
                     }
 
                     ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 1.2; ctx.setLineDash([]);
