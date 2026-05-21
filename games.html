@@ -734,9 +734,10 @@ rating:"⭐ 5.0",
 link:"#",
 
 image:"https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop"
-}
+}, // <-- এখানে কমা (,) ফিক্স করা হয়েছে
+
 {
-name:"Galaxy Fighter",
+name:"Galaxy Fighter (Clone)",
 description:"Epic futuristic galaxy battle game.",
 category:"Adventure",
 rating:"⭐ 4.9",
@@ -747,7 +748,7 @@ image:"https://raw.githubusercontent.com/mdarif76769/mdarif76769/main/main/image
 },
 
 {
-name:"Carrom Board",
+name:"Carrom Board (Clone)",
 description:"Realistic multiplayer carrom game.",
 category:"Sports",
 rating:"⭐ 4.8",
@@ -758,7 +759,7 @@ image:"https://raw.githubusercontent.com/mdarif76769/mdarif76769/main/main/image
 },
 
 {
-name:"Runneer Escape",
+name:"Runneer Escape (Clone)",
 description:"Escape fun Runneer and survive.",
 category:"Action",
 rating:"⭐ 4.7",
@@ -769,7 +770,7 @@ image:"https://raw.githubusercontent.com/mdarif76769/mdarif76769/main/main/image
 },
 
 {
-name:"Snake Master",
+name:"Snake Master (Clone)",
 description:"Modern snake game with neon cyber effects.",
 category:"Classic",
 rating:"⭐ 4.5",
@@ -780,7 +781,7 @@ image:"https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&aut
 },
 
 {
-name:"Speed Racer",
+name:"Speed Racer (Clone)",
 description:"High speed racing with futuristic cars.",
 category:"Racing",
 rating:"⭐ 4.8",
@@ -788,7 +789,7 @@ rating:"⭐ 4.8",
 link:"#",
 
 image:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1200&auto=format&fit=crop"
-},
+}
 
 ];
 
@@ -863,8 +864,7 @@ hour12:false
 const time =
 now.toLocaleTimeString('en-GB',options);
 
-document.getElementById("clock")
-innerHTML = "🇧🇩 " + time;
+document.getElementById("clock").innerHTML = "🇧🇩 " + time; // <-- এখানে ডট (.) ফিক্স করা হয়েছে
 
 }
 
