@@ -1,61 +1,101 @@
-
 <!DOCTYPE html>
-<html oncontextmenu="return false;" onkeypress="return false;" onkeydown="return false;" onkeyup="return false;">
+<html lang="en">
 
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta charset="UTF-8">
-	<meta name="author" content="MD ARIFUL ISLAM" />
-	<meta name="description" content="Github Portfolio of MD ARIFUL ISLAM (RS5_ARIF)" />
-	<meta name="keywords" content="RS5_ARIF,mdarif76769,MD ARIFUL ISLAM, mdarif76769,MD ARIFUL Islam,mdarif76769" />
-	<meta name="google-site-verification" content="UlM1X0FSSUY=" />
-	<meta property="og:locale" content="en_US" />
-	<meta property="og:title" content="RS5_ARIF (MD ARIFUL ISLAM)" />
-	<meta property="og:site_name" content="RS5_ARIF | Github Portfolio" />
-	<meta property="og:url" content="https://mdarif76769.github.io/mdarif76769/main/index.html" />
-	<meta property="og:description" content="Github Portfolio of RS5_ARIF" />
-	<meta property="og:image" content="https://raw.githubusercontent.com/mdarif76769/mdarif76769/main/main/logo.png" />
-	<meta property="og:image:type" content="image/svg+xml" />
-	<meta itemprop="name" content="RS5_ARIF" />
-	<meta itemprop="image" content="https://raw.githubusercontent.com/mdarif76769/mdarif76769/main/main/logo.png" />
-	<meta itemprop="description" content="Github Portfolio of mdarif76769" />
-	<title>RS5_ARIF | Github Portfolio</title>
-	<link rel="shortcut icon" href="logo.png" />
-	<link rel="stylesheet" href="Style.css">
-	<link rel="stylesheet" href="awsam.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="author" content="MD ARIFUL ISLAM" />
+    <meta name="description" content="Github Portfolio of MD ARIFUL ISLAM (RS5_ARIF)" />
+    <meta name="keywords" content="RS5_ARIF,mdarif76769,MD ARIFUL ISLAM, mdarif76769" />
+    <title>RS5_ARIF | HACKER PORTFOLIO</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <style>
+        /* হ্যাকার UI থিম এবং গ্লাস ইফেক্ট */
+        body {
+            background: #0a0a0a;
+            color: #00ff41; /* হ্যাকার সবুজ */
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        #header, #socials {
+            background: rgba(0, 20, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid #00ff41;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 10px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+        }
+
+        h1 { text-transform: uppercase; letter-spacing: 2px; }
+        
+        .link {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            text-decoration: none;
+            transition: 0.4s;
+            border-radius: 5px;
+        }
+
+        .link:hover {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 0 20px #00ff41;
+        }
+
+        .counter img { filter: invert(1) hue-rotate(90deg); }
+    </style>
 </head>
 
 <body>
-	<div class="counter">
-		<img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fhtr-tech%2Fhtr-tech.github.io"/>
-	</div>
-	<div id="header">
-		<img src="logo.png" />
-		<h1>MD ARIFUL ISLAM</h1>
-		<p>&#8205;<span text="Ethical Hacking , Programmer , Bangladeshi , Muslim "></span></p>
-		<!-- https://codepen.io/hckkiu/pen/xxYbYQb -->
-		<script> 
-			var span = document.querySelector("p span"), textArr = span.getAttribute("text").split(", "), maxTextIndex = textArr.length, sPerChar = .15, sBetweenWord = 1.5, textIndex = 0; function typing(e, t) { var n = 0, r = t.length - 1, a = setInterval(function () { span.innerHTML += t[n], n == r ? (clearInterval(a), setTimeout(function () { deleting(e, t) }, 1000 * sBetweenWord)) : n += 1 }, 1000 * sPerChar) } function deleting(e, t) { var n = t.length - 1, r = setInterval(function () { span.innerHTML = t.substr(0, n), 0 == n ? (clearInterval(r), e + 1 == maxTextIndex ? e = 0 : e += 1, setTimeout(function () { typing(e, textArr[e]) }, 1000 * sBetweenWord)) : n -= 1 }, 1000 * sPerChar) } typing(textIndex, textArr[textIndex]);
-		</script>
-	</div>
-	<div id="socials">
-		<a class="link" href="https://t.me/RS5ARIF" target="_blank"><i class="fa fa-telegram"></i>
-			Telegram</a>
-		<a class="link" href="https://github.com/mdarif76769/" target="_blank"><i class="fa fa-github"></i> Github</a>
-		<a class="link" href="https://facebook.com/profile.php?id=61583794717593" target="_blank"><i class="fa fa-facebook"></i>
-			Facebook</a>
-		<a class="link" href="https://instagram.com/mdarif4e" target="_blank"><i class="fa fa-instagram"></i>
-			Instagram</a>
-		<a class="link" href="https://www.youtube.com/@mdarif76769" target="_blank"><i class="fa fa-youtube-play"></i>
-			YouTube</a>
-		<a class="link" href="https://raw.githubusercontent.com/mdarif76769/mdarif76769/main/main/mdarif76769.gpg" target="_blank">
-    <i class="fa fa-key"></i> GPG Public Key
-</a>
+    <div class="counter">
+        <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fmdarif76769%2Fmdarif76769.github.io"/>
+    </div>
 
-		<a class="link" href="http://mdarif76769.github.io/mdarif76769/" target="_blank"><i class="fa fa-github-alt"></i> Reverse
-			Engineering Repo</a>
-	</div>
+    <div id="header">
+        <img src="logo.png" style="width: 80px; border-radius: 50%; border: 2px solid #00ff41;" />
+        <h1>MD ARIFUL ISLAM</h1>
+        <p>&#8205;<span text="Ethical Hacking , Programmer , Penetration Tester , Muslim "></span></p>
+        
+        <script> 
+            var span = document.querySelector("p span"), textArr = span.getAttribute("text").split(", "), maxTextIndex = textArr.length, sPerChar = .15, sBetweenWord = 1.5, textIndex = 0; function typing(e, t) { var n = 0, r = t.length - 1, a = setInterval(function () { span.innerHTML += t[n], n == r ? (clearInterval(a), setTimeout(function () { deleting(e, t) }, 1000 * sBetweenWord)) : n += 1 }, 1000 * sPerChar) } function deleting(e, t) { var n = t.length - 1, r = setInterval(function () { span.innerHTML = t.substr(0, n), 0 == n ? (clearInterval(r), e + 1 == maxTextIndex ? e = 0 : e += 1, setTimeout(function () { typing(e, textArr[e]) }, 1000 * sBetweenWord)) : n -= 1 }, 1000 * sPerChar) } typing(textIndex, textArr[textIndex]);
+        </script>
+    </div>
+
+    <div id="socials">
+        <a class="link" href="https://t.me/RS5ARIF" target="_blank"><i class="fa fa-telegram"></i> Telegram</a>
+        <a class="link" href="https://github.com/mdarif76769/" target="_blank"><i class="fa fa-github"></i> Github</a>
+        <a class="link" href="https://facebook.com/profile.php?id=61583794717593" target="_blank"><i class="fa fa-facebook"></i> Facebook</a>
+        <a class="link" href="https://instagram.com/mdarif4e" target="_blank"><i class="fa fa-instagram"></i> Instagram</a>
+        <a class="link" href="https://www.youtube.com/@mdarif76769" target="_blank"><i class="fa fa-youtube-play"></i> YouTube</a>
+        <a class="link" href="https://raw.githubusercontent.com/mdarif76769/mdarif76769/main/main/mdarif76769.gpg" target="_blank"><i class="fa fa-key"></i> GPG Public Key</a>
+        <a class="link" href="http://mdarif76769.github.io/mdarif76769/" target="_blank"><i class="fa fa-github-alt"></i> Reverse Engineering Repo</a>
+    </div>
+
+    <script>
+        // হ্যাকার সুরক্ষা
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) || (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
+                return false;
+            }
+        }
+    </script>
 </body>
-
 </html>
