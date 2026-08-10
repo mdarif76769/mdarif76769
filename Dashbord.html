@@ -484,23 +484,6 @@
         .lang-shell { color: #89e051; }
         .lang-css { color: #563d7c; }
         .lang-other { color: var(--accent); }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            background: rgba(0, 255, 136, 0.1);
-            color: var(--primary);
-            border: 1px solid var(--primary);
-        }
-
-        .status-badge.updated {
-            background: rgba(0, 212, 255, 0.1);
-            color: var(--accent);
-            border-color: var(--accent);
-        }
     </style>
 </head>
 <body>
@@ -542,12 +525,13 @@
 
     <script>
         const GITHUB_USERNAME = 'mdarif76769';
+        // GitHub API endpoint configured to fetch all public repositories automatically
         const API_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`;
 
         let allRepos = [];
         let currentFilter = 'all';
 
-        // Fetch repositories from GitHub API with fallback handling
+        // Fetch repositories from GitHub API
         async function fetchRepositories() {
             try {
                 const response = await fetch(API_URL);
@@ -555,46 +539,41 @@
                 const data = await response.json();
 
                 if (Array.isArray(data) && data.length > 0) {
+                    // Sorting by latest updated so new repositories appear automatically on top
                     allRepos = data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
                     renderRepositories(allRepos);
                 } else {
-                    loadFallbackRepos();
+                    document.getElementById('reposContainer').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">⚠️</div>
+                            <h3>No repositories found</h3>
+                            <p>Your GitHub profile has no public repositories yet.</p>
+                        </div>
+                    `;
                 }
             } catch (error) {
                 console.error('Error fetching repos:', error);
-                loadFallbackRepos();
+                document.getElementById('reposContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">❌</div>
+                        <h3>Failed to load repositories</h3>
+                        <p>Please check your internet connection or GitHub API limit.</p>
+                    </div>
+                `;
             }
         }
 
-        // Fallback to ensure UI loads even if API limits hit
-        function loadFallbackRepos() {
-            allRepos = [
-                {
-                    name: 'RS5SSLBypass',
-                    description: 'Advanced APK Patcher & SSL Pinning Bypass Tool',
-                    language: 'Python',
-                    stargazers_count: 1,
-                    forks_count: 0,
-                    updated_at: new Date().toISOString(),
-                    html_url: `https://github.com/${GITHUB_USERNAME}/RS5SSLBypass`,
-                    topics: ['security', 'apk-patcher']
-                }
-            ];
-            renderRepositories(allRepos);
-        }
-
-        // Filter repositories
+        // Filter repositories based on selected category
         function filterRepositories(filter) {
             currentFilter = filter;
-
             let filtered = allRepos;
 
             if (filter === 'python') {
-                filtered = allRepos.filter(repo => repo.language === 'Python');
+                filtered = allRepos.filter(repo => repo.language && repo.language.toLowerCase() === 'python');
             } else if (filter === 'html') {
-                filtered = allRepos.filter(repo => repo.language === 'HTML');
+                filtered = allRepos.filter(repo => repo.language && repo.language.toLowerCase() === 'html');
             } else if (filter === 'shell') {
-                filtered = allRepos.filter(repo => repo.language === 'Shell');
+                filtered = allRepos.filter(repo => repo.language && repo.language.toLowerCase() === 'shell');
             } else if (filter === 'starred') {
                 filtered = allRepos.filter(repo => repo.stargazers_count > 0);
             }
@@ -602,23 +581,22 @@
             renderRepositories(filtered);
         }
 
-        // Search repositories
+        // Search repositories by query string
         function searchRepositories(query) {
             const filtered = allRepos.filter(repo =>
                 repo.name.toLowerCase().includes(query.toLowerCase()) ||
                 (repo.description && repo.description.toLowerCase().includes(query.toLowerCase()))
             );
-
             renderRepositories(filtered);
         }
 
-        // Render repositories
+        // Render repositories dynamically into the grid
         function renderRepositories(repos) {
             const container = document.getElementById('reposContainer');
 
             if (repos.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
+                    <div class="empty-state">
                         <div class="empty-icon">⚠️</div>
                         <h3>No repositories found</h3>
                         <p>Try adjusting your search or filters</p>
@@ -684,11 +662,12 @@
             }).join('');
         }
 
-        // Event listeners
+        // Search event listener
         document.getElementById('searchInput').addEventListener('input', (e) => {
             searchRepositories(e.target.value);
         });
 
+        // Filter button event listeners
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -697,7 +676,7 @@
             });
         });
 
-        // Load repositories on page load
+        // Automatically fetch repositories on page load
         window.addEventListener('load', fetchRepositories);
     </script>
 </body>
