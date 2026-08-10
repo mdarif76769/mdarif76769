@@ -35,6 +35,7 @@
             position: relative;
         }
 
+        /* Animated background grid */
         body::before {
             content: '';
             position: fixed;
@@ -56,6 +57,7 @@
             100% { transform: translateY(50px); }
         }
 
+        /* Noise effect */
         body::after {
             content: '';
             position: fixed;
@@ -73,6 +75,7 @@
             z-index: 2;
         }
 
+        /* Header */
         header {
             background: rgba(10, 14, 39, 0.9);
             border-bottom: 2px solid var(--primary);
@@ -115,6 +118,7 @@
             animation: fadeInUp 1s ease-out;
         }
 
+        /* Search Section */
         .search-section {
             max-width: 1200px;
             margin: 2rem auto;
@@ -151,6 +155,7 @@
             color: var(--text-secondary);
         }
 
+        /* Filter buttons */
         .filter-buttons {
             display: flex;
             gap: 1rem;
@@ -185,6 +190,7 @@
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
         }
 
+        /* Repository Grid */
         .repos-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -205,6 +211,23 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .repo-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 136, 0.1) 50%, transparent 70%);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
         .repo-card:hover {
@@ -349,11 +372,20 @@
             box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
         }
 
+        .repo-card.accent .visit-btn {
+            background: linear-gradient(135deg, var(--accent), #00ffcc);
+        }
+
         .visit-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
         }
 
+        .repo-card.secondary .visit-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 0, 110, 0.5);
+        }
+
+        /* Loading state */
         .loading {
             display: flex;
             justify-content: center;
@@ -379,6 +411,7 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Empty state */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -391,6 +424,7 @@
             margin-bottom: 1rem;
         }
 
+        /* Footer */
         footer {
             background: rgba(10, 14, 39, 0.9);
             border-top: 2px solid var(--accent);
@@ -412,6 +446,7 @@
             text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
 
+        /* Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -423,9 +458,49 @@
             }
         }
 
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .repos-container {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+
+        /* Language badge colors */
         .lang-python { color: #3776ab; }
         .lang-html { color: #e34c26; }
+        .lang-javascript { color: #f7df1e; }
         .lang-shell { color: #89e051; }
+        .lang-css { color: #563d7c; }
+        .lang-other { color: var(--accent); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .status-badge.updated {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
     </style>
 </head>
 <body>
@@ -440,7 +515,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="🔍 Search repositories... (e.g., RS5SSLBypass)">
+                    placeholder="🔍 Search repositories... (e.g., SMS, PAGASUS, PhoneSploit)">
             </div>
 
             <div class="filter-buttons">
@@ -448,6 +523,7 @@
                 <button class="filter-btn" data-filter="python">Python</button>
                 <button class="filter-btn" data-filter="html">HTML</button>
                 <button class="filter-btn" data-filter="shell">Shell</button>
+                <button class="filter-btn" data-filter="starred">⭐ Starred</button>
             </div>
         </div>
 
@@ -460,7 +536,7 @@
     </main>
 
     <footer>
-        <p>Made with ❤️ by MDARIF76769 | <a href="https://github.com/mdarif76769" target="_blank">Visit GitHub Profile →</a></p>
+        <p>Made with ❤️ by MDARIF76769 | <a href="https://github.com/mdarif76769">Visit GitHub Profile →</a></p>
         <p style="margin-top: 1rem; font-size: 0.9rem;">© 2026 All Rights Reserved | Educational Purpose Only</p>
     </footer>
 
@@ -469,11 +545,13 @@
         const API_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`;
 
         let allRepos = [];
+        let currentFilter = 'all';
 
+        // Fetch repositories from GitHub API with fallback handling
         async function fetchRepositories() {
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('API limit or network error');
+                if (!response.ok) throw new Error('Network response failed');
                 const data = await response.json();
 
                 if (Array.isArray(data) && data.length > 0) {
@@ -483,17 +561,17 @@
                     loadFallbackRepos();
                 }
             } catch (error) {
-                console.warn('API fetch failed, loading manual profile repos:', error);
+                console.error('Error fetching repos:', error);
                 loadFallbackRepos();
             }
         }
 
-        // Fallback list incase API blocks or fails
+        // Fallback to ensure UI loads even if API limits hit
         function loadFallbackRepos() {
             allRepos = [
                 {
                     name: 'RS5SSLBypass',
-                    description: 'Advanced APK Patcher & SSL Pinning Bypass Tool for security researchers.',
+                    description: 'Advanced APK Patcher & SSL Pinning Bypass Tool',
                     language: 'Python',
                     stargazers_count: 1,
                     forks_count: 0,
@@ -505,32 +583,42 @@
             renderRepositories(allRepos);
         }
 
+        // Filter repositories
         function filterRepositories(filter) {
+            currentFilter = filter;
+
             let filtered = allRepos;
+
             if (filter === 'python') {
-                filtered = allRepos.filter(repo => repo.language && repo.language.toLowerCase() === 'python');
+                filtered = allRepos.filter(repo => repo.language === 'Python');
             } else if (filter === 'html') {
-                filtered = allRepos.filter(repo => repo.language && repo.language.toLowerCase() === 'html');
+                filtered = allRepos.filter(repo => repo.language === 'HTML');
             } else if (filter === 'shell') {
-                filtered = allRepos.filter(repo => repo.language && repo.language.toLowerCase() === 'shell');
+                filtered = allRepos.filter(repo => repo.language === 'Shell');
+            } else if (filter === 'starred') {
+                filtered = allRepos.filter(repo => repo.stargazers_count > 0);
             }
+
             renderRepositories(filtered);
         }
 
+        // Search repositories
         function searchRepositories(query) {
             const filtered = allRepos.filter(repo =>
                 repo.name.toLowerCase().includes(query.toLowerCase()) ||
                 (repo.description && repo.description.toLowerCase().includes(query.toLowerCase()))
             );
+
             renderRepositories(filtered);
         }
 
+        // Render repositories
         function renderRepositories(repos) {
             const container = document.getElementById('reposContainer');
 
             if (repos.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state">
+                    <div class="empty-state" style="grid-column: 1/-1;">
                         <div class="empty-icon">⚠️</div>
                         <h3>No repositories found</h3>
                         <p>Try adjusting your search or filters</p>
@@ -547,10 +635,11 @@
                 colorIndex++;
 
                 const language = repo.language || 'Unknown';
-                const languageClass = `lang-${language.toLowerCase()}`;
+                const languageClass = `lang-${language.toLowerCase().replace(/[+#]/g, '')}`;
                 const stars = repo.stargazers_count || 0;
                 const description = repo.description || 'No description provided';
                 const updated = new Date(repo.updated_at).toLocaleDateString();
+                const isStarred = stars > 0 ? '⭐' : '☆';
 
                 return `
                     <div class="repo-card ${colorClass}">
@@ -566,13 +655,22 @@
                                 <span class="${languageClass}">●</span>
                                 <span>${language}</span>
                             </div>
+                            ${repo.topics && repo.topics.length > 0 ? `
+                                <div class="meta-item">
+                                    🏷️ ${repo.topics.slice(0, 2).join(', ')}
+                                </div>
+                            ` : ''}
                         </div>
 
                         <div class="repo-footer">
                             <div class="repo-stats">
                                 <div class="stat">
-                                    <span>⭐</span>
+                                    <span>${isStarred}</span>
                                     <span>${stars}</span>
+                                </div>
+                                <div class="stat">
+                                    <span>🔄</span>
+                                    <span>${repo.forks_count}</span>
                                 </div>
                                 <div class="stat">
                                     <span>📅</span>
@@ -586,6 +684,7 @@
             }).join('');
         }
 
+        // Event listeners
         document.getElementById('searchInput').addEventListener('input', (e) => {
             searchRepositories(e.target.value);
         });
@@ -598,6 +697,7 @@
             });
         });
 
+        // Load repositories on page load
         window.addEventListener('load', fetchRepositories);
     </script>
 </body>
