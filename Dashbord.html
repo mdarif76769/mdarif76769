@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -540,72 +541,27 @@
 
     <script>
         const GITHUB_USERNAME = 'mdarif76769';
-        // প্রতি পেজে ১০০ করে একাধিক পেজ ফেচ করার জন্য লজিক হ্যান্ডেল করা হয়েছে
         const API_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`;
 
         let allRepos = [];
         let currentFilter = 'all';
 
-        // Fetch repositories from GitHub API with complete safety and all-repo support
+        // Fetch repositories from GitHub API
         async function fetchRepositories() {
             try {
-                let page = 1;
-                let fetchedData = [];
-                let keepFetching = true;
+                const response = await fetch(API_URL);
+                const data = await response.json();
 
-                while (keepFetching) {
-                    const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&page=${page}&sort=updated`);
-                    const data = await response.json();
-
-                    if (Array.isArray(data) && data.length > 0) {
-                        fetchedData = fetchedData.concat(data);
-                        if (data.length < 100) {
-                            keepFetching = false;
-                        } else {
-                            page++;
-                        }
-                    } else {
-                        keepFetching = false;
-                    }
-                }
-
-                if (fetchedData.length > 0) {
-                    allRepos = fetchedData.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+                if (Array.isArray(data)) {
+                    allRepos = data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
                     renderRepositories(allRepos);
                 } else {
-                    loadFallbackRepos();
+                    showError('Failed to fetch repositories');
                 }
             } catch (error) {
                 console.error('Error fetching repos:', error);
-                loadFallbackRepos();
+                showError('Error connecting to GitHub API');
             }
-        }
-
-        // ফলব্যাক ব্যাকআপ ডেটা সিস্টেম (API ব্লক বা ফেইল করলেও ড্যাশবোর্ড সচল রাখতে)
-        function loadFallbackRepos() {
-            allRepos = [
-                {
-                    name: 'RS5SSLBypass',
-                    description: 'Advanced APK Patcher & SSL Pinning Bypass Tool for security researchers.',
-                    language: 'Python',
-                    stargazers_count: 1,
-                    forks_count: 0,
-                    updated_at: new Date().toISOString(),
-                    html_url: `https://github.com/${GITHUB_USERNAME}/RS5SSLBypass`,
-                    topics: ['security', 'apk-patcher']
-                },
-                {
-                    name: 'Dashboard',
-                    description: 'Security Research & Penetration Testing Tools Portfolio Dashboard.',
-                    language: 'HTML',
-                    stargazers_count: 1,
-                    forks_count: 0,
-                    updated_at: new Date().toISOString(),
-                    html_url: `https://github.com/${GITHUB_USERNAME}/Dashboard`,
-                    topics: ['portfolio', 'dashboard']
-                }
-            ];
-            renderRepositories(allRepos);
         }
 
         // Filter repositories
@@ -615,11 +571,11 @@
             let filtered = allRepos;
 
             if (filter === 'python') {
-                filtered = allRepos.filter(repo => repo.language && repo.language.toLowerCase() === 'python');
+                filtered = allRepos.filter(repo => repo.language === 'Python');
             } else if (filter === 'html') {
-                filtered = allRepos.filter(repo => repo.language && repo.language.toLowerCase() === 'html');
+                filtered = allRepos.filter(repo => repo.language === 'HTML');
             } else if (filter === 'shell') {
-                filtered = allRepos.filter(repo => repo.language && repo.language.toLowerCase() === 'shell');
+                filtered = allRepos.filter(repo => repo.language === 'Shell');
             } else if (filter === 'starred') {
                 filtered = allRepos.filter(repo => repo.stargazers_count > 0);
             }
